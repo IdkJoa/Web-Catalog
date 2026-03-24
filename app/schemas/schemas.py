@@ -1,84 +1,96 @@
-from pydantic import BaseModel, ConfigDict, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 from uuid import UUID
 from datetime import datetime
 from typing import Optional, List
 
-class CategoryBase(BaseModel):
-    name: str
-    slug: str
-    description: Optional[str] = None
+class CategoryBase(BaseModel): #JD
+    name: str = Field(max_length=50, min_length=3,
+                      description="Debe contener al menos 3 caracteres y no mas de 50 caracteres")
+    slug: str = Field(max_length=50, min_length=3,
+                      description="Debe contener al menos 3 caracteres y no mas de 50 caracteres")
+    description: Optional[str] = Field(max_length=500,
+                                       description="No debe de pasar de 500 caracteres")
     image_url: Optional[str] = None
     sort_order: int = 0
     is_active: bool = True
 
 class BrandBase(BaseModel):
-    name: str
-    slug: str
+    name: str = Field(max_length=50, min_length=3,
+                      description="Debe contener al menos 3 caracteres y no mas de 50 caracteres")
+    slug: str = Field(max_length=50, min_length=3,
+                      description="Debe contener al menos 3 caracteres y no mas de 50 caracteres")
     image_url: Optional[str] = None
     is_active: bool = True
 
-class ConditionBase(BaseModel):
-    name: str
-    description: Optional[str] = None
+class ConditionBase(BaseModel): #JD
+    name: str = Field(max_length=50, min_length=3,
+                      description="Debe contener al menos 3 caracteres y no mas de 50 caracteres")
+    description: Optional[str] = Field(max_length=500,
+                                       description="No debe de pasar de 500 caracteres")
     sort_order: int = 0
     is_active: bool = True
 
-class WarrantyBase(BaseModel):
-    duration: str
+class WarrantyBase(BaseModel): #JD
+    duration: str = Field(max_length=50, min_length=3,
+                          description="Debe contener al menos 3 caracteres y no mas de 50 caracteres")
     is_active: bool = True
 
-class CapacityBase(BaseModel):
-    capacity: str
+class CapacityBase(BaseModel): #JD
+    capacity: str = Field(max_length=50, min_length=3,
+                          description="Debe contener al menos 3 caracteres y no mas de 50 caracteres")
     is_active: bool = True
 
-class CapacityCreate(CapacityBase):
-    product_id: UUID
+class CapacityCreate(CapacityBase): #JD
+    product_id: UUID = Field(not None)
 
-class CapacityOut(CapacityBase):
+class CapacityOut(CapacityBase): #JD
     id: UUID
     product_id: UUID
     model_config = ConfigDict(from_attributes=True)
 
-class ProductBase(BaseModel):
+class ProductBase(BaseModel): #JD
     category_id: UUID
     brand_id: UUID
     condition_id: UUID
     warranty_id: UUID
-    name: str
+    name: str = Field(max_length=50, min_length=3,
+                      description="Debe contener al menos 3 caracteres y no mas de 50 caracteres")
     image_url: Optional[str] = None
-    model_name: Optional[str] = None
-    price: float
-    sale_price: Optional[float] = None
+    model_name: Optional[str] | None = Field(max_length=50, min_length=3,
+                                             description="Debe contener al menos 3 caracteres y no mas de 50 caracteres")
+    price: float | None = Field(ge=1, decimal_places=4, description="Debe ser mayor a 0")
+    sale_price: Optional[float] = Field(ge=1, decimal_places=4, description="Debe ser mayor a 0")
     stock_status: bool = True
     is_featured: bool = False
     is_active: bool = True
 
-class ProductCreate(ProductBase):
+class ProductCreate(ProductBase): #JD
     pass
 
-class ProductUpdate(BaseModel):
-    name: Optional[str] = None
-    price: Optional[float] = None
+class ProductUpdate(BaseModel): #JD
+    name: Optional[str] | None = Field(max_length=50, min_length=3,
+                      description="Debe contener al menos 3 caracteres y no mas de 50 caracteres")
+    price: Optional[float] | None = Field(ge=1, decimal_places=4, description="Debe ser mayor a 0")
     is_active: Optional[bool] = None
 
-class CategoryOut(CategoryBase):
+class CategoryOut(CategoryBase): #JD
     id: UUID
     model_config = ConfigDict(from_attributes=True)
 
-class BrandOut(BrandBase):
+class BrandOut(BrandBase): #JD
     id: UUID
     model_config = ConfigDict(from_attributes=True)
 
-class ConditionOut(ConditionBase):
+class ConditionOut(ConditionBase): #JD
     id: UUID
     model_config = ConfigDict(from_attributes=True)
 
-class WarrantyOut(WarrantyBase):
+class WarrantyOut(WarrantyBase): #JD
     id: UUID
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)
 
-class ProductOut(ProductBase):
+class ProductOut(ProductBase): #JD
     id: UUID
     updated_at: datetime
     category: Optional[CategoryOut] = None
