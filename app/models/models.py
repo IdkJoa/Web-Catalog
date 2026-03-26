@@ -18,7 +18,7 @@ class Category(Base):
     slug: Mapped[str] = mapped_column(String(100), unique=True, index=True)
     description: Mapped[Optional[str]] = mapped_column(Text)
     image_url: Mapped[Optional[str]] = mapped_column(String(255))
-    sort_order: Mapped[int] = mapped_column(Integer, default=0)
+    sort_order: Mapped[Optional[int]] = mapped_column(Integer, default=0)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
     products: Mapped[List["Product"]] = relationship(back_populates="category")

@@ -2,10 +2,8 @@ from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from sqlalchemy import select
-from sqlalchemy.orm import Session, selectinload
-from ..models.models import Base, Product, Capacity
-from ..schemas.schemas import ProductCreate, ProductUpdate, CapacityCreate, CapacityBase
-
+from sqlalchemy.orm import Session
+from ..models.models import Base
 
 ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
@@ -55,17 +53,4 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             db.refresh(obj)
         return obj
 
-class CRUDProduct(CRUDBase[Product, ProductCreate, ProductUpdate]):
-    def get(self, db: Session, id: Any) -> Optional[Product]:
-        stmt = select(Product).options(selectinload(Product.capacities)).where(Product.id == id, Product.is_active == True)
-        return db.execute(stmt).scalar_one_or_none()
 
-    def get_multi(self, db: Session, *, skip: int = 0, limit: int = 100) -> List[Product]:
-        stmt = select(Product).options(selectinload(Product.capacities)).where(Product.is_active == True).offset(skip).limit(limit)
-        return list(db.execute(stmt).scalars().all())
-
-class CRUDCapacity(CRUDBase[Capacity, CapacityCreate, CapacityBase]):
-    pass
-
-product = CRUDProduct(Product)
-capacity = CRUDCapacity(Capacity)
