@@ -8,6 +8,8 @@ from pydantic import BaseModel, Field, ConfigDict
 from app.schemas.Brand import BrandOut
 from app.schemas.Capacity import CapacityOut
 from app.schemas.Category import CategoryOut
+from app.schemas.Condition import ConditionOut
+from app.schemas.Warranty import WarrantyOut
 
 
 class ProductBase(BaseModel):  # JD
@@ -36,8 +38,12 @@ class ProductUpdate(BaseModel):  # JD
                                        description="Debe contener al menos 3 caracteres y no mas de 50 caracteres")
     stock_status: Optional[bool] = None
     price: Optional[Decimal] | None = Field(ge=1, decimal_places=4, description="Debe ser mayor a 0")
+    sale_price: Optional[Decimal] | None = Field(ge=1, decimal_places=4, description="Debe ser mayor a 0")
+    is_featured: Optional[bool] = None
     is_active: Optional[bool] = None
-    updated_at: Optional[datetime] = datetime.now()
+    meta_title: Optional[str] = Field(None, max_length=100)
+    meta_description: Optional[str] = Field(None, max_length=160)
+    meta_keywords: Optional[str] = Field(None, max_length=255)
 
 
 class ProductOut(ProductBase):  # JD
@@ -45,5 +51,10 @@ class ProductOut(ProductBase):  # JD
     updated_at: datetime
     category: Optional[CategoryOut] = None
     brand: Optional[BrandOut] = None
+    condition: Optional[ConditionOut] = None
+    warranty: Optional[WarrantyOut] = None
     capacities: List[CapacityOut] = []
+    meta_title: Optional[str] = Field(None, max_length=100)
+    meta_description: Optional[str] = Field(None, max_length=160)
+    meta_keywords: Optional[str] = Field(None, max_length=255)
     model_config = ConfigDict(from_attributes=True)

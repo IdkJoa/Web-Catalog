@@ -14,7 +14,13 @@ class CategoryBase(BaseModel): #JD
     image_url: Optional[str] = None
     sort_order: int = Field(default=0, description="Sort order")
     is_active: bool = True
+    meta_title: Optional[str] = Field(None, max_length=100)
+    meta_description: Optional[str] = Field(None, max_length=160)
+    meta_keywords: Optional[str] = Field(None, max_length=255)
 
 class CategoryOut(CategoryBase): #JD
     id: UUID
+    meta_title: Optional[str] = Field(None, max_length=100)
+    meta_description: Optional[str] = Field(None, max_length=160)
+    meta_keywords: Optional[str] = Field(None, max_length=255)
     model_config = ConfigDict(from_attributes=True)

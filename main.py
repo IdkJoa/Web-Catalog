@@ -1,12 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.routes.router_products import router as router_products
+from app.routes.router_category import router as router_category
+from app.routes.router_warranty import router as router_warranty
+from app.routes.router_brand import router as router_brand
+from app.routes.router_condition import router as router_condition
+from app.routes.router_capacity import router as router_capacity
 from app.routes import auth_routes, testimonial_routes
-from app.router.router_products import router as router_products
-from app.router.router_category import router as router_category
-from app.router.router_warranty import router as router_warranty
-from app.router.router_brand import router as router_brand
-from app.router.router_condition import router as router_condition
-from app.router.router_capacity import router as router_capacity
 
 app = FastAPI(
     title="Web'Catalog API",

@@ -1,17 +1,15 @@
-from fastapi import FastAPI, HTTPException, APIRouter, BackgroundTasks
+from fastapi import  HTTPException, APIRouter, BackgroundTasks, security
 from fastapi.params import Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi import status
 from sqlalchemy.orm import Session
-
+from app.core import security
 from app.db.db_connection import get_db
 from app.schemas import schemas
-from app.core import security
 from app.schemas.schemas import PasswordRecovery, PasswordReset
 from app.services.auth import register_user
 from app.services.email import EmailService
 
-app = FastAPI()
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 @router.post("/register", response_model=schemas.AdminUserOut, status_code=status.HTTP_201_CREATED)

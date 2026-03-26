@@ -15,7 +15,7 @@ def get_brand(db: Session = Depends(get_db)):
     try:
         brand = brand_services.get_multi(db)
 
-        if brand is []:
+        if not brand:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                                 detail="No hay brand activas")
 
@@ -67,7 +67,7 @@ def create_brand(brand: BrandBase, db: Session = Depends(get_db)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error interno: {str(e)}"
         )
-@router.put("/update", response_model=BrandOut)
+@router.put("/update/{id}", response_model=BrandOut)
 def update_brand(brand: BrandBase, id: UUID, db: Session = Depends(get_db)):
     try:
         brand_exist = brand_services.get(db, id)
@@ -86,7 +86,7 @@ def update_brand(brand: BrandBase, id: UUID, db: Session = Depends(get_db)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error interno: {str(e)}"
         )
-@router.delete("/delete", response_model=BrandOut)
+@router.delete("/delete/{id}", response_model=BrandOut)
 def delete_brand(id: UUID, db: Session = Depends(get_db)):
     try:
         brand_exist = brand_services.get(db, id)

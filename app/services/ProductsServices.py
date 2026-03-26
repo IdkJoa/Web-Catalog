@@ -48,6 +48,10 @@ class ProductsServices(CRUDBase[Product, ProductBase, ProductBase]):
         except Exception as e:
             raise Exception(f"Error al devolver la producto: {str(e)}")
 
+    """
+    Fslta listar por ofertas, categoria, marca
+    """
+
     def create(self, db: Session, *, obj_in: ProductCreate) -> ProductCreate:
         try:
           category = category_service.get(db=db, id=obj_in.category_id)

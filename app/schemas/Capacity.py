@@ -9,7 +9,7 @@ class CapacityBase(BaseModel): #JD
     is_active: bool = True
 
 class CapacityCreate(CapacityBase): #JD
-    product_id: UUID = Field(not None)
+    product_id: UUID
 
 class CapacityOut(CapacityBase): #JD
     id: UUID

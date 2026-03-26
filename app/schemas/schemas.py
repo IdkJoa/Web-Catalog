@@ -1,8 +1,6 @@
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, field_validator
 import re
 from uuid import UUID
-from datetime import datetime
-from typing import Optional, List
 
 from password_validator import PasswordValidator
 

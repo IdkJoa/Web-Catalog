@@ -17,7 +17,7 @@ class Capacityservices(CRUDBase[Capacity, CapacityCreate, CapacityBase]):
          capacity = db.execute(stmt).scalar_one_or_none()
 
          if capacity is None:
-            raise Exception(f"La capacidad no existe")
+            return None
 
          return capacity
         except Exception as e:
@@ -40,7 +40,7 @@ class Capacityservices(CRUDBase[Capacity, CapacityCreate, CapacityBase]):
           product = product_services.get(db=db, id=obj_in.product_id)
 
           if product is None:
-              raise Exception("Condition not found")
+              None
 
           db_obj = Capacity(
             product_id=product.id,

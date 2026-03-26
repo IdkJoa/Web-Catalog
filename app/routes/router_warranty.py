@@ -66,7 +66,7 @@ def create_warranty(warranty: WarrantyBase, db: Session = Depends(get_db)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error interno: {str(e)}"
         )
-@router.put("/update", response_model=WarrantyOut)
+@router.put("/update/{id}", response_model=WarrantyOut)
 def update_warranty(warranty: WarrantyBase, id: UUID, db: Session = Depends(get_db)):
     try:
         warranty_exist = warranty_services.get(db, id)

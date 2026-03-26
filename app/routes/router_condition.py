@@ -8,7 +8,7 @@ from app.db.db_connection import get_db
 from app.schemas.Condition import ConditionOut, ConditionBase
 from app.services.Conditionservices import condition_services
 
-router = APIRouter(prefix="/Condition", tags=["Condition"],
+router = APIRouter(prefix="/condition", tags=["Condition"],
                     responses = {status.HTTP_404_NOT_FOUND: {"message": "Condition no encontrado"}})
 
 @router.get("/", response_model=List[ConditionOut])
@@ -16,7 +16,7 @@ def get_condition(db: Session = Depends(get_db)):
     try:
         conditions = condition_services.get_multi(db)
 
-        if conditions is []:
+        if not conditions:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                                 detail="No hay Conditions activas")
 
@@ -69,7 +69,7 @@ def create_condition(condition: ConditionBase, db: Session = Depends(get_db)):
             detail=f"Error interno: {str(e)}"
         )
 
-@router.put("/update", response_model=ConditionOut)
+@router.put("/update/{id}", response_model=ConditionOut)
 def update_condition(condition: ConditionBase, id: UUID, db: Session = Depends(get_db)):
     try:
         condition_exist = condition_services.get(db, id)
@@ -88,7 +88,7 @@ def update_condition(condition: ConditionBase, id: UUID, db: Session = Depends(g
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error interno: {str(e)}"
         )
-@router.delete("/delete", response_model=ConditionOut)
+@router.delete("/delete/{id}", response_model=ConditionOut)
 def delete_condition(id: UUID, db: Session = Depends(get_db)):
     try:
         condition_exist = condition_services.get(db, id)

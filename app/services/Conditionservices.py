@@ -27,7 +27,7 @@ class Conditionservices(CRUDBase[Condition, ConditionBase, ConditionBase]):
          stmt = select(Condition).where(Condition.name == name, Condition.is_active == True)
          condition = db.execute(stmt).scalar_one_or_none()
 
-         if Condition is None:
+         if condition is None:
             return None
 
          return condition

@@ -54,7 +54,7 @@ class Categoryservices(CRUDBase[Category, CategoryBase, CategoryBase]):
             name=obj_in.name,
             slug=obj_in.slug,
             description=obj_in.description,
-            imagen_url=obj_in.imagen_url,
+            image_url=obj_in.image_url,
             sort_order=obj_in.sort_order,
             is_active=obj_in.is_active,
 

@@ -35,9 +35,9 @@ def get_products(db: Session = Depends(get_db)):
         )
 
 @router.get("/{id}", response_model=ProductOut)
-def get_product(product_id: UUID, db: Session = Depends(get_db)):
+def get_product( id: UUID, db: Session = Depends(get_db)):
     try:
-        product = product_services.get(db, id=product_id)
+        product = product_services.get(db, id=id)
         if product is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                                 detail="Producto no encontrado")
@@ -57,12 +57,15 @@ def create_product(product: ProductCreate, db: Session = Depends(get_db)):
         exist = product_services.get_byname(db, product.model_name)
 
         if exist:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT,
                                 detail="Producto existente")
 
         product = product_services.create(db=db, obj_in=product)
 
         return product
+
+    except HTTPException as http_exc:
+        raise http_exc
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -70,7 +73,7 @@ def create_product(product: ProductCreate, db: Session = Depends(get_db)):
             detail=f"Error interno del servidor: {str(e)}"
         )
 
-@router.put("/update", response_model=ProductOut)
+@router.put("/update/{id}", response_model=ProductOut)
 def update_product(id: UUID, product: ProductUpdate, db: Session = Depends(get_db)):
     try:
         exist = product_services.get(db, id)
@@ -82,6 +85,8 @@ def update_product(id: UUID, product: ProductUpdate, db: Session = Depends(get_d
         product = product_services.update(db=db, obj_in=product, db_obj=exist)
 
         return product
+    except HTTPException as http_exc:
+        raise http_exc
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -89,8 +94,8 @@ def update_product(id: UUID, product: ProductUpdate, db: Session = Depends(get_d
             detail=f"Error interno del servidor: {str(e)}"
         )
 
-@router.delete("/delete", response_model=ProductOut)
-def create_product(id: UUID, db: Session = Depends(get_db)):
+@router.delete("/delete/{id}", response_model=ProductOut)
+def delete_product(id: UUID, db: Session = Depends(get_db)):
     try:
         exist = product_services.get(db, id)
 
@@ -101,6 +106,8 @@ def create_product(id: UUID, db: Session = Depends(get_db)):
         product = product_services.delete(db=db, id=id)
 
         return product
+    except HTTPException as http_exc:
+        raise http_exc
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

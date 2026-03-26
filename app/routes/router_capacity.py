@@ -58,7 +58,7 @@ def create_capacity(capacity: CapacityCreate, db: Session = Depends(get_db)):
         exist = capacity_services.get_byname(db, capacity.capacity)
 
         if exist:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT,
                                 detail="capacity existente")
 
         capacity = capacity_services.create(db=db, obj_in=capacity)
@@ -71,7 +71,7 @@ def create_capacity(capacity: CapacityCreate, db: Session = Depends(get_db)):
             detail=f"Error interno del servidor: {str(e)}"
         )
 
-@router.put("/update", response_model=CapacityOut)
+@router.put("/update/{id}", response_model=CapacityOut)
 def update_capacity(id: UUID, capacity: CapacityBase, db: Session = Depends(get_db)):
     try:
         exist = capacity_services.get(db, id)
@@ -90,7 +90,7 @@ def update_capacity(id: UUID, capacity: CapacityBase, db: Session = Depends(get_
             detail=f"Error interno del servidor: {str(e)}"
         )
 
-@router.delete("/delete", response_model=CapacityOut)
+@router.delete("/delete/{id}", response_model=CapacityOut)
 def create_capacity(id: UUID, db: Session = Depends(get_db)):
     try:
         exist = capacity_services.get(db, id)

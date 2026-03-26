@@ -67,7 +67,7 @@ def create_category(category: CategoryBase, db: Session = Depends(get_db)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error interno: {str(e)}"
         )
-@router.put("/update", response_model=CategoryOut)
+@router.put("/update/{id}", response_model=CategoryOut)
 def update_category(category: CategoryBase, id: UUID, db: Session = Depends(get_db)):
     try:
         categoria_exist = category_service.get(db, id)
@@ -87,7 +87,7 @@ def update_category(category: CategoryBase, id: UUID, db: Session = Depends(get_
             detail=f"Error interno: {str(e)}"
         )
 
-@router.delete("/delete", response_model=CategoryOut)
+@router.delete("/delete/{id}", response_model=CategoryOut)
 def delete_category(id: UUID, db: Session = Depends(get_db)):
     try:
         categoria_exist = category_service.get(db, id)

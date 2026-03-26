@@ -23,24 +23,24 @@ class Warrantyservices(CRUDBase[Warranty, WarrantyBase, WarrantyBase]):
     def get(self, db: Session, id: Any) -> Warranty:
         try:
          stmt = (select(Warranty).where(Warranty.id == id, Warranty.is_active == True))
-         category = db.execute(stmt).scalar_one_or_none()
+         warranty = db.execute(stmt).scalar_one_or_none()
 
-         if category is None:
-            raise Exception(f"La garantia no existe")
+         if warranty is None:
+            return None
 
-         return category
+         return warranty
         except Exception as e:
             raise Exception(f"Error al devolver la garantia: {str(e)}")
 
     def get_byduration(self, db: Session, duration: Any) -> Warranty:
         try:
          stmt = (select(Warranty).where(Warranty.duration == duration, Warranty.is_active == True))
-         category = db.execute(stmt).scalar_one_or_none()
+         warranty = db.execute(stmt).scalar_one_or_none()
 
-         if category is None:
+         if warranty is None:
             return None
 
-         return category
+         return warranty
         except Exception as e:
             raise Exception(f"Error al devolver la garantia: {str(e)}")
 
