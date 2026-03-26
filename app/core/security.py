@@ -14,7 +14,6 @@ def hash_password(password: str) -> str:
 def verify_password(plain: str, hashed: str) -> bool:
     return pwd_context.verify(plain, hashed)
 
-
 def create_access_token(subject: str, expires_delta: timedelta | None = None) -> str:
     expire = datetime.now(UTC) + (expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES))
     return jwt.encode({"sub": subject, "exp": expire, "type": "access"}, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
@@ -23,6 +22,9 @@ def create_email_token(subject: str) -> str:
     expire = datetime.now(UTC) + timedelta(hours=settings.EMAIL_TOKEN_EXPIRE_HOURS)
     return jwt.encode({"sub": subject, "exp": expire, "type": "email_confirm"}, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
+def create_password_reset_token(subject: str) -> str:
+    expire = datetime.now(UTC) + timedelta(minutes=15)
+    return jwt.encode({"sub": subject, "exp": expire, "type": "password_reset"}, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 def decode_token(token: str, expected_type: str) -> str | None:
     try:
@@ -34,3 +36,6 @@ def decode_token(token: str, expected_type: str) -> str | None:
         return payload.get("sub")
     except InvalidTokenError:
         return None
+
+def verify_dummy():
+    pwd_context.dummy_verify() #Simulate a failed hash check

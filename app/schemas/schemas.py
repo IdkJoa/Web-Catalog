@@ -101,6 +101,21 @@ class ProductOut(ProductBase): #JD
     capacities: List[CapacityOut] = []
     model_config = ConfigDict(from_attributes=True)
 
+class PasswordRecovery(BaseModel):
+    email: EmailStr
+
+class PasswordReset(BaseModel):
+    token: str
+    new_password: str
+
+    @field_validator('new_password')
+    @classmethod
+    def validate_password(cls, value: str) -> str:
+        if not schema.validate(value):
+            raise ValueError(
+                "Password must be at least 8 characters and contain an uppercase letter, lowercase letter, number, and symbol.")
+        return value
+
 class AdminUserCreate(BaseModel):
     first_name: str
     last_name: str

@@ -2,6 +2,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     # Definimos las variables y su tipo
+
     db_connection_url: str = ""
 
     # JWT SECTION
@@ -11,6 +12,7 @@ class Settings(BaseSettings):
 
     # Email confirmation token
     EMAIL_TOKEN_EXPIRE_HOURS: int = 24
+    RESET_PASSWORD_TOKEN_EXPIRE_MINUTES: int = 15
 
     # Email/SMTP
     SMTP_HOST: str
