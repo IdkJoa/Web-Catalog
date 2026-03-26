@@ -18,8 +18,11 @@ class Category(Base):
     slug: Mapped[str] = mapped_column(String(100), unique=True, index=True)
     description: Mapped[Optional[str]] = mapped_column(Text)
     image_url: Mapped[Optional[str]] = mapped_column(String(255))
-    sort_order: Mapped[int] = mapped_column(Integer, default=0)
+    sort_order: Mapped[Optional[int]] = mapped_column(Integer, default=0)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    meta_title: Mapped[Optional[str]] = mapped_column(String(100))
+    meta_description: Mapped[Optional[str]] = mapped_column(String(160))
+    meta_keywords: Mapped[Optional[str]] = mapped_column(String(255))
 
     products: Mapped[List["Product"]] = relationship(back_populates="category")
 
@@ -78,6 +81,9 @@ class Product(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), onupdate=func.now(),
                                                  server_default=func.now())
+    meta_title: Mapped[Optional[str]] = mapped_column(String(100))  # e.g., "My Store | Home"
+    meta_description: Mapped[Optional[str]] = mapped_column(String(160))  # Best practice length
+    meta_keywords: Mapped[Optional[str]] = mapped_column(String(255))
 
     category: Mapped["Category"] = relationship(back_populates="products")
     brand: Mapped["Brand"] = relationship(back_populates="products")
