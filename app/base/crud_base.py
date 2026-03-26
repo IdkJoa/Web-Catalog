@@ -23,10 +23,6 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         stmt = select(self.model).where(self.model.is_active == True).offset(skip).limit(limit)
         return list(db.execute(stmt).scalars().all())
 
-    def get_all_no_filtered(self, db: Session, *, skip: int = 0, limit: int = 100) -> List[ModelType]:
-        stmt = select(self.model).offset(skip).limit(limit)
-        return list(db.execute(stmt).scalars().all())
-
     def create(self, db: Session, *, obj_in: CreateSchemaType) -> ModelType:
         obj_in_data = jsonable_encoder(obj_in) # Gets the schema and convert into dict
         db_obj = self.model(**obj_in_data) # Unpack and convert to instance of alquemy model

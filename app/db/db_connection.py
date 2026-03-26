@@ -1,8 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
-from app.db.Config import settings
-
-
+from Config import settings
 # definir credenciales
 db_url = settings.db_connection_url
 
