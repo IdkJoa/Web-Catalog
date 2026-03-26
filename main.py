@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import auth_routes
+from app.routes import auth_routes, testimonial_routes
 
 app = FastAPI(
     title="Web'Catalog API",
@@ -27,3 +27,4 @@ def read_root():
     return {"status": "ok", "message": "CMS API is running"}
 
 app.include_router(auth_routes.router)
+app.include_router(testimonial_routes.router)
