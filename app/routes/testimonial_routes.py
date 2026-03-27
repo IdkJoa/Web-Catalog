@@ -10,7 +10,7 @@ from app.core.security import get_current_user, get_current_active_user
 from sqlalchemy.orm import Session
 from app.schemas.testimonial import TestimonialOut
 from app.schemas import testimonial
-from app.services.post_testimonial import testimonial_service
+from app.services.testimonial_service import testimonial_service
 
 router = APIRouter(prefix="/testimonial", tags=["Testimonial"])
 

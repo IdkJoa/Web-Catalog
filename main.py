@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.routes import auth_routes, testimonial_routes, banner_routes, site_settings_routes
 from app.routes.routes_products import router as routes_products
 from app.routes.routes_category import router as routes_category
 from app.routes.routes_warranty import router as routes_warranty
@@ -34,6 +35,8 @@ def read_root():
 
 app.include_router(auth_routes.router)
 app.include_router(testimonial_routes.router)
+app.include_router(banner_routes.router)
+app.include_router(site_settings_routes.router)
 app.include_router(routes_products)
 app.include_router(routes_category)
 app.include_router(routes_warranty)

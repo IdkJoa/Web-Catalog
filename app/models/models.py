@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 from typing import List, Optional
-from sqlalchemy import String, Text, Numeric, ForeignKey, DateTime, Boolean, Integer
+from sqlalchemy import String, Text, Numeric, ForeignKey, DateTime, Boolean, Integer, text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
@@ -148,7 +148,11 @@ class SiteSetting(Base):
     whatsapp: Mapped[Optional[str]] = mapped_column(String(20))
     address: Mapped[Optional[str]] = mapped_column(Text)
     email: Mapped[Optional[str]] = mapped_column(String(255))
-    seo_data: Mapped[Optional[str]] = mapped_column(Text)
+    #SEO
+    meta_title: Mapped[Optional[str]] = mapped_column(String(100))
+    meta_description: Mapped[Optional[str]] = mapped_column(String(160))
+    meta_keywords: Mapped[Optional[str]] = mapped_column(String(255))
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=text("true"))
 
 
 class SocialNetwork(Base):
