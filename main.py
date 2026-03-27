@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import auth_routes, testimonial_routes
+from app.routes import auth_routes, testimonial_routes, banner_routes, site_settings_routes
 
 app = FastAPI(
     title="Web'Catalog API",
@@ -28,3 +28,5 @@ def read_root():
 
 app.include_router(auth_routes.router)
 app.include_router(testimonial_routes.router)
+app.include_router(banner_routes.router)
+app.include_router(site_settings_routes.router)
