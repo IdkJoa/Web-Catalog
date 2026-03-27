@@ -7,7 +7,7 @@ from app.routes.routes_warranty import router as routes_warranty
 from app.routes.routes_brand import router as routes_brand
 from app.routes.routes_condition import router as routes_condition
 from app.routes.routes_capacity import router as routes_capacity
-from app.routes import auth_routes, testimonial_routes
+from app.routes import auth_routes, testimonial_routes, social_network_routes
 
 app = FastAPI(
     title="Web'Catalog API",
@@ -43,4 +43,5 @@ app.include_router(routes_warranty)
 app.include_router(routes_brand)
 app.include_router(routes_condition)
 app.include_router(routes_capacity)
+app.include_router(social_network_routes.router)
 
