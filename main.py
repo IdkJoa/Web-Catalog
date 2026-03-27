@@ -29,10 +29,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
-def read_root():
-    return {"status": "ok", "message": "CMS API is running"}
-
 app.include_router(auth_routes.router)
 app.include_router(testimonial_routes.router)
 app.include_router(banner_routes.router)
