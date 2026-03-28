@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import banner_routes, site_settings_routes
+from app.routes import banner_routes, site_settings_routes, subscriber_routes
 from app.routes.routes_products import router as routes_products
 from app.routes.routes_category import router as routes_category
 from app.routes.routes_warranty import router as routes_warranty
@@ -29,10 +29,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
-def read_root():
-    return {"status": "ok", "message": "CMS API is running"}
-
 app.include_router(auth_routes.router)
 app.include_router(testimonial_routes.router)
 app.include_router(banner_routes.router)
@@ -44,4 +40,5 @@ app.include_router(routes_brand)
 app.include_router(routes_condition)
 app.include_router(routes_capacity)
 app.include_router(social_network_routes.router)
+app.include_router(subscriber_routes.router)
 
