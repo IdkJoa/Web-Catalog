@@ -4,6 +4,7 @@ from uuid import UUID
 from fastapi import APIRouter, status, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from app.core.security import get_current_active_user
 from app.db.db_connection import get_db
 from app.schemas.Condition import ConditionOut, ConditionBase
 from app.services.Conditionservices import condition_services
@@ -30,7 +31,7 @@ def get_condition(db: Session = Depends(get_db)):
             detail=f"Error interno: {str(e)}"
         )
 
-@router.get("/{id}", response_model=ConditionOut)
+@router.get("/{id}", response_model=ConditionOut, )
 def get_condition(id: UUID, db: Session = Depends(get_db)):
     try:
         condition = condition_services.get(db, id)
@@ -50,7 +51,7 @@ def get_condition(id: UUID, db: Session = Depends(get_db)):
         )
 
 
-@router.post("/create", response_model=ConditionOut)
+@router.post("/create", response_model=ConditionOut, dependencies=[Depends(get_current_active_user)])
 def create_condition(condition: ConditionBase, db: Session = Depends(get_db)):
     try:
         exist = condition_services.get_byname(db, condition.name)
@@ -69,7 +70,7 @@ def create_condition(condition: ConditionBase, db: Session = Depends(get_db)):
             detail=f"Error interno: {str(e)}"
         )
 
-@router.put("/update/{id}", response_model=ConditionOut)
+@router.put("/update/{id}", response_model=ConditionOut, dependencies=[Depends(get_current_active_user)])
 def update_condition(condition: ConditionBase, id: UUID, db: Session = Depends(get_db)):
     try:
         condition_exist = condition_services.get(db, id)
@@ -88,7 +89,7 @@ def update_condition(condition: ConditionBase, id: UUID, db: Session = Depends(g
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error interno: {str(e)}"
         )
-@router.delete("/delete/{id}", response_model=ConditionOut)
+@router.delete("/delete/{id}", response_model=ConditionOut, dependencies=[Depends(get_current_active_user)])
 def delete_condition(id: UUID, db: Session = Depends(get_db)):
     try:
         condition_exist = condition_services.get(db, id)

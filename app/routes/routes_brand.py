@@ -4,6 +4,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from app.core.security import get_current_active_user
 from app.db.db_connection import get_db
 from app.schemas.Brand import BrandOut, BrandBase
 from app.services.Brandservices import brand_services
@@ -49,7 +50,7 @@ def get_brand(id: UUID, db: Session = Depends(get_db)):
         )
 
 
-@router.post("/create", response_model=BrandOut)
+@router.post("/create", response_model=BrandOut, dependencies=[Depends(get_current_active_user)])
 def create_brand(brand: BrandBase, db: Session = Depends(get_db)):
     try:
         exist = brand_services.get_byname(db, brand.name)
@@ -67,7 +68,7 @@ def create_brand(brand: BrandBase, db: Session = Depends(get_db)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error interno: {str(e)}"
         )
-@router.put("/update/{id}", response_model=BrandOut)
+@router.put("/update/{id}", response_model=BrandOut, dependencies=[Depends(get_current_active_user)])
 def update_brand(brand: BrandBase, id: UUID, db: Session = Depends(get_db)):
     try:
         brand_exist = brand_services.get(db, id)
@@ -86,7 +87,7 @@ def update_brand(brand: BrandBase, id: UUID, db: Session = Depends(get_db)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error interno: {str(e)}"
         )
-@router.delete("/delete/{id}", response_model=BrandOut)
+@router.delete("/delete/{id}", response_model=BrandOut, dependencies=[Depends(get_current_active_user)])
 def delete_brand(id: UUID, db: Session = Depends(get_db)):
     try:
         brand_exist = brand_services.get(db, id)

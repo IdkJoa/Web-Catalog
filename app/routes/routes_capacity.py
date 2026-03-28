@@ -4,6 +4,7 @@ from uuid import UUID
 from fastapi import APIRouter, status, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from app.core.security import get_current_active_user
 from app.db.db_connection import get_db
 from app.schemas.Capacity import CapacityOut, CapacityCreate, CapacityBase
 from app.services.Capacityservices import capacity_services
@@ -52,7 +53,7 @@ def get_capacity(id: UUID, db: Session = Depends(get_db)):
         )
 
 
-@router.post("/create", response_model=CapacityOut)
+@router.post("/create", response_model=CapacityOut, dependencies=[Depends(get_current_active_user)])
 def create_capacity(capacity: CapacityCreate, db: Session = Depends(get_db)):
     try:
         exist = capacity_services.get_byname(db, capacity.capacity)
@@ -71,7 +72,7 @@ def create_capacity(capacity: CapacityCreate, db: Session = Depends(get_db)):
             detail=f"Error interno del servidor: {str(e)}"
         )
 
-@router.put("/update/{id}", response_model=CapacityOut)
+@router.put("/update/{id}", response_model=CapacityOut, dependencies=[Depends(get_current_active_user)])
 def update_capacity(id: UUID, capacity: CapacityBase, db: Session = Depends(get_db)):
     try:
         exist = capacity_services.get(db, id)
@@ -90,7 +91,7 @@ def update_capacity(id: UUID, capacity: CapacityBase, db: Session = Depends(get_
             detail=f"Error interno del servidor: {str(e)}"
         )
 
-@router.delete("/delete/{id}", response_model=CapacityOut)
+@router.delete("/delete/{id}", response_model=CapacityOut, dependencies=[Depends(get_current_active_user)])
 def create_capacity(id: UUID, db: Session = Depends(get_db)):
     try:
         exist = capacity_services.get(db, id)

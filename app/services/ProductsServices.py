@@ -1,4 +1,5 @@
 from typing import Any, List
+from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -51,6 +52,47 @@ class ProductsServices(CRUDBase[Product, ProductBase, ProductBase]):
     """
     Fslta listar por ofertas, categoria, marca
     """
+    def get_byoffer(self, db: Session, *, skip: int = 0, limit: int = 100) -> List[Product]:
+        try:
+         stmt = (select(Product).where(Product.is_active == True, Product.sale_price.isnot(None), Product.sale_price < Product.price, Product.sale_price > 0)
+                 .offset(skip).limit(limit).order_by(Product.sale_price.desc()))
+         if stmt is None:
+             return []
+
+         return list(db.execute(stmt).scalars().all())
+
+        except Exception as e:
+         raise Exception(f"Error al listar Product by offer: {str(e)}")
+
+    def get_by_category(self, db: Session, category_id: UUID, *, skip: int = 0, limit: int = 100) -> List[Product]:
+        try:
+            stmt = (
+                select(Product)
+                .where(
+                    Product.is_active == True,
+                    Product.category_id == category_id
+                )
+                .offset(skip).limit(limit)
+                .order_by(Product.price.desc())
+            )
+            return list(db.execute(stmt).scalars().all())
+        except Exception as e:
+            raise Exception(f"Error al listar productos por categoria: {str(e)}")
+
+    def get_by_brand(self, db: Session, brand_id: UUID, *, skip: int = 0, limit: int = 100) -> List[Product]:
+        try:
+            stmt = (
+                select(Product)
+                .where(
+                    Product.is_active == True,
+                    Product.brand_id == brand_id
+                )
+                .offset(skip).limit(limit)
+                .order_by(Product.price.desc())
+            )
+            return list(db.execute(stmt).scalars().all())
+        except Exception as e:
+            raise Exception(f"Error al listar productos por marca: {str(e)}")
 
     def create(self, db: Session, *, obj_in: ProductCreate) -> ProductCreate:
         try:
