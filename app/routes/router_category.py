@@ -4,6 +4,7 @@ from uuid import UUID
 from fastapi import APIRouter,status,Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from app.core.security import get_current_active_user
 from app.db.db_connection import get_db
 from app.schemas.Category import CategoryBase, CategoryOut
 from app.services.Categoryservices import category_service
@@ -49,7 +50,7 @@ def get_category(id: UUID, db: Session = Depends(get_db)):
             detail=f"Error interno: {str(e)}"
         )
 
-@router.post("/create", response_model=CategoryOut)
+@router.post("/create", response_model=CategoryOut, dependencies=[Depends(get_current_active_user)])
 def create_category(category: CategoryBase, db: Session = Depends(get_db)):
     try:
         exist = category_service.get_byname(db, category.name)
@@ -67,7 +68,7 @@ def create_category(category: CategoryBase, db: Session = Depends(get_db)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error interno: {str(e)}"
         )
-@router.put("/update/{id}", response_model=CategoryOut)
+@router.put("/update/{id}", response_model=CategoryOut, dependencies=[Depends(get_current_active_user)])
 def update_category(category: CategoryBase, id: UUID, db: Session = Depends(get_db)):
     try:
         categoria_exist = category_service.get(db, id)
@@ -87,7 +88,7 @@ def update_category(category: CategoryBase, id: UUID, db: Session = Depends(get_
             detail=f"Error interno: {str(e)}"
         )
 
-@router.delete("/delete/{id}", response_model=CategoryOut)
+@router.delete("/delete/{id}", response_model=CategoryOut, dependencies=[Depends(get_current_active_user)])
 def delete_category(id: UUID, db: Session = Depends(get_db)):
     try:
         categoria_exist = category_service.get(db, id)

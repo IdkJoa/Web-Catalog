@@ -4,6 +4,7 @@ from uuid import UUID
 from fastapi import APIRouter,status,Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from app.core.security import get_current_active_user
 from app.db.db_connection import get_db
 from app.schemas.Warranty import WarrantyBase, WarrantyOut
 from app.services.Warrantyservices import warranty_services
@@ -48,7 +49,7 @@ def get_warranty(id: UUID, db: Session = Depends(get_db)):
         )
 
 
-@router.post("/create", response_model=WarrantyOut)
+@router.post("/create", response_model=WarrantyOut, dependencies=[Depends(get_current_active_user)])
 def create_warranty(warranty: WarrantyBase, db: Session = Depends(get_db)):
     try:
         exist = warranty_services.get_byduration(db, warranty.duration)
@@ -66,7 +67,7 @@ def create_warranty(warranty: WarrantyBase, db: Session = Depends(get_db)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error interno: {str(e)}"
         )
-@router.put("/update/{id}", response_model=WarrantyOut)
+@router.put("/update/{id}", response_model=WarrantyOut, dependencies=[Depends(get_current_active_user)])
 def update_warranty(warranty: WarrantyBase, id: UUID, db: Session = Depends(get_db)):
     try:
         warranty_exist = warranty_services.get(db, id)
