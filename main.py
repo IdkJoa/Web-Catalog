@@ -1,12 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes.router_products import router as router_products
-from app.routes.router_category import router as router_category
-from app.routes.router_warranty import router as router_warranty
-from app.routes.router_brand import router as router_brand
-from app.routes.router_condition import router as router_condition
-from app.routes.router_capacity import router as router_capacity
-from app.routes import auth_routes, testimonial_routes
+from app.routes import banner_routes, site_settings_routes, subscriber_routes
+from app.routes.routes_products import router as routes_products
+from app.routes.routes_category import router as routes_category
+from app.routes.routes_warranty import router as routes_warranty
+from app.routes.routes_brand import router as routes_brand
+from app.routes.routes_condition import router as routes_condition
+from app.routes.routes_capacity import router as routes_capacity
+from app.routes import auth_routes, testimonial_routes, social_network_routes
 
 app = FastAPI(
     title="Web'Catalog API",
@@ -28,16 +29,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
-def read_root():
-    return {"status": "ok", "message": "CMS API is running"}
-
 app.include_router(auth_routes.router)
 app.include_router(testimonial_routes.router)
-app.include_router(router_products)
-app.include_router(router_category)
-app.include_router(router_warranty)
-app.include_router(router_brand)
-app.include_router(router_condition)
-app.include_router(router_capacity)
+app.include_router(banner_routes.router)
+app.include_router(site_settings_routes.router)
+app.include_router(routes_products)
+app.include_router(routes_category)
+app.include_router(routes_warranty)
+app.include_router(routes_brand)
+app.include_router(routes_condition)
+app.include_router(routes_capacity)
+app.include_router(social_network_routes.router)
+app.include_router(subscriber_routes.router)
 

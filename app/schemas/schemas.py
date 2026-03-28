@@ -60,6 +60,5 @@ class AdminUserOut(BaseModel):
     is_confirmed: bool
     model_config = ConfigDict(from_attributes=True)
 
-
 schema = PasswordValidator()
 schema.min(8).has().uppercase().lowercase().has().digits().has().symbols()

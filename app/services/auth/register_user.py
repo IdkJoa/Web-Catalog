@@ -9,7 +9,6 @@ from app.schemas import schemas
 from app.core import security
 from app.base.crud_base import CRUDBase
 
-
 class RegisterUser(CRUDBase[AdminUser, AdminUserCreate, AdminUserUpdate]):
     # Overriding the standard create method to handle the password hashing
     def create(self, db: Session, *, obj_in: schemas.AdminUserCreate) -> models.AdminUser:

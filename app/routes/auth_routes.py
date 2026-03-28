@@ -8,7 +8,7 @@ from app.db.db_connection import get_db
 from app.schemas import schemas
 from app.schemas.schemas import PasswordRecovery, PasswordReset
 from app.services.auth import register_user
-from app.services.email import EmailService
+from app.services.email_service import EmailService
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 

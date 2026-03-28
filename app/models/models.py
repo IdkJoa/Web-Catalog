@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 from typing import List, Optional
-from sqlalchemy import String, Text, Numeric, ForeignKey, DateTime, Boolean, Integer
+from sqlalchemy import String, Text, Numeric, ForeignKey, DateTime, Boolean, Integer, text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
@@ -148,7 +148,11 @@ class SiteSetting(Base):
     whatsapp: Mapped[Optional[str]] = mapped_column(String(20))
     address: Mapped[Optional[str]] = mapped_column(Text)
     email: Mapped[Optional[str]] = mapped_column(String(255))
-    seo_data: Mapped[Optional[str]] = mapped_column(Text)
+    #SEO
+    meta_title: Mapped[Optional[str]] = mapped_column(String(100))
+    meta_description: Mapped[Optional[str]] = mapped_column(String(160))
+    meta_keywords: Mapped[Optional[str]] = mapped_column(String(255))
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=text("true"))
 
 
 class SocialNetwork(Base):
@@ -157,6 +161,7 @@ class SocialNetwork(Base):
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(String(100))
     url: Mapped[str] = mapped_column(String(255))
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=text("true"))
 
 
 class Subscriber(Base):
@@ -164,5 +169,5 @@ class Subscriber(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=text("true"))
     registration_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    origin_inquiry: Mapped[Optional[str]] = mapped_column(String(255))
