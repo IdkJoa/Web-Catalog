@@ -22,11 +22,11 @@ def hash_password(password: str) -> str:
 def verify_password(plain: str, hashed: str) -> bool:
     return pwd_context.verify(plain, hashed)
 
-def hash_email(email: EmailStr) -> str:
-    return pwd_context.hash(email)
+def encrypt_email(email: EmailStr) -> str:
+    pass
 
-def verify_hashed_email(plain: EmailStr, hashed: str) -> bool:
-    return pwd_context.verify(plain, hashed)
+def verify_encrypted_email(plain: EmailStr, encrypted: str) -> bool:
+    pass
 
 def create_access_token(subject: str, expires_delta: timedelta | None = None) -> str:
     expire = datetime.now(UTC) + (expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES))
