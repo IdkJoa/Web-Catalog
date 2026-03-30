@@ -7,8 +7,8 @@ from sqlalchemy.orm import Session
 
 from app.core.security import get_current_active_user
 from app.db.db_connection import get_db
-from app.schemas.Products import ProductCreate, ProductOut, ProductUpdate
-from app.services.ProductsServices import product_services
+from app.schemas.products import ProductCreate, ProductOut, ProductUpdate
+from app.services.products_service import product_services
 
 router = APIRouter(prefix="/products", tags=["products"],
                     responses = {status.HTTP_404_NOT_FOUND: {"message": "producto no encontrado"}})

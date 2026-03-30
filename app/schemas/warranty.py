@@ -14,3 +14,6 @@ class WarrantyOut(BaseModel): #JD
     duration: str
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)
+
+class WarrantyProductsOut(BaseModel): #J
+    duration: str

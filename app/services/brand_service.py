@@ -3,7 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 from app.base.crud_base import CRUDBase
 from app.models.models import Brand
-from app.schemas.Brand import BrandBase
+from app.schemas.brand import BrandBase
 
 
 class Brandservices(CRUDBase[Brand, BrandBase, BrandBase]):

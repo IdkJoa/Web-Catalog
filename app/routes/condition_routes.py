@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session
 
 from app.core.security import get_current_active_user
 from app.db.db_connection import get_db
-from app.schemas.Condition import ConditionOut, ConditionBase
-from app.services.Conditionservices import condition_services
+from app.schemas.condition import ConditionOut, ConditionBase
+from app.services.condition_service import condition_services
 
 router = APIRouter(prefix="/condition", tags=["Condition"],
                     responses = {status.HTTP_404_NOT_FOUND: {"message": "Condition no encontrado"}})

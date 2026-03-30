@@ -6,11 +6,11 @@ from sqlalchemy.orm import Session
 
 from app.base.crud_base import CRUDBase
 from app.models.models import Product
-from app.schemas.Products import ProductBase, ProductCreate
-from app.services.Brandservices import brand_services
-from app.services.Categoryservices import category_service
-from app.services.Conditionservices import condition_services
-from app.services.Warrantyservices import warranty_services
+from app.schemas.products import ProductBase, ProductCreate
+from app.services.brand_service import brand_services
+from app.services.category_service import category_service
+from app.services.condition_service import condition_services
+from app.services.warranty_service import warranty_services
 
 
 class ProductsServices(CRUDBase[Product, ProductBase, ProductBase]):

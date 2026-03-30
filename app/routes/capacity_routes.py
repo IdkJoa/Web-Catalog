@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session
 
 from app.core.security import get_current_active_user
 from app.db.db_connection import get_db
-from app.schemas.Capacity import CapacityOut, CapacityCreate, CapacityBase
-from app.services.Capacityservices import capacity_services
+from app.schemas.capacity import CapacityOut, CapacityCreate, CapacityBase
+from app.services.capacity_service import capacity_services
 
 router = APIRouter(prefix="/capacity", tags=["capacity"],
                     responses = {status.HTTP_404_NOT_FOUND: {"message": "producto no encontrado"}})
@@ -92,7 +92,7 @@ def update_capacity(id: UUID, capacity: CapacityBase, db: Session = Depends(get_
         )
 
 @router.delete("/delete/{id}", response_model=CapacityOut, dependencies=[Depends(get_current_active_user)])
-def create_capacity(id: UUID, db: Session = Depends(get_db)):
+def delete_capacity(id: UUID, db: Session = Depends(get_db)):
     try:
         exist = capacity_services.get(db, id)
 

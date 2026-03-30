@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.base.crud_base import CRUDBase
 from app.models.models import Warranty
-from app.schemas.Warranty import WarrantyBase
+from app.schemas.warranty import WarrantyBase
 
 
 class Warrantyservices(CRUDBase[Warranty, WarrantyBase, WarrantyBase]):

@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session
 
 from app.core.security import get_current_active_user
 from app.db.db_connection import get_db
-from app.schemas.Warranty import WarrantyBase, WarrantyOut
-from app.services.Warrantyservices import warranty_services
+from app.schemas.warranty import WarrantyBase, WarrantyOut
+from app.services.warranty_service import warranty_services
 
 router = APIRouter(prefix="/warranty", tags=["warranty"],
                     responses = {status.HTTP_404_NOT_FOUND: {"message": "warrranty no encontrado"}})

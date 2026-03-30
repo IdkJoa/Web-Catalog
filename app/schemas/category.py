@@ -24,3 +24,9 @@ class CategoryOut(CategoryBase): #JD
     meta_description: Optional[str] = Field(None, max_length=160)
     meta_keywords: Optional[str] = Field(None, max_length=255)
     model_config = ConfigDict(from_attributes=True)
+
+class CategoryProductsOut(BaseModel):
+    name: str = Field(max_length=50, min_length=3)
+    meta_title: Optional[str] = Field(None, max_length=100)
+    meta_description: Optional[str] = Field(None, max_length=160)
+    meta_keywords: Optional[str] = Field(None, max_length=255)

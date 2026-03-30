@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session
 
 from app.core.security import get_current_active_user
 from app.db.db_connection import get_db
-from app.schemas.Brand import BrandOut, BrandBase
-from app.services.Brandservices import brand_services
+from app.schemas.brand import BrandOut, BrandBase
+from app.services.brand_service import brand_services
 
 router = APIRouter(prefix="/brand", tags=["brand"],
                     responses = {status.HTTP_404_NOT_FOUND: {"message": "brand no encontrado"}})

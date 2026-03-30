@@ -1,12 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes import banner_routes, site_settings_routes, subscriber_routes
-from app.routes.routes_products import router as routes_products
-from app.routes.routes_category import router as routes_category
-from app.routes.routes_warranty import router as routes_warranty
-from app.routes.routes_brand import router as routes_brand
-from app.routes.routes_condition import router as routes_condition
-from app.routes.routes_capacity import router as routes_capacity
+from app.routes.products_routes import router as routes_products
+from app.routes.category_routes import router as routes_category
+from app.routes.warranty_routes import router as routes_warranty
+from app.routes.brand_routes import router as routes_brand
+from app.routes.condition_routes import router as routes_condition
+from app.routes.capacity_routes import router as routes_capacity
 from app.routes import auth_routes, testimonial_routes, social_network_routes
 
 app = FastAPI(
