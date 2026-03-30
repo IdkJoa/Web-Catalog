@@ -1,6 +1,9 @@
+import logging
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, MessageType
 from pydantic import EmailStr
 from app.db.Config import settings
+
+logger = logging.getLogger(__name__)
 
 class EmailService:
     def __init__(self):
@@ -18,6 +21,7 @@ class EmailService:
         self.mailer = FastMail(self.conf)
 
     async def send_verification_email(self, email_to: EmailStr, token: str):
+        logger.info(f"Sending verification email to {email_to}")
         frontend = settings.FRONTEND_URL or "http://localhost:8000"
         verification_link = f"{frontend}/auth/verify-email/{token}"
 
@@ -38,9 +42,15 @@ class EmailService:
             subtype=MessageType.html
         )
 
-        await self.mailer.send_message(message)
+        try:
+            await self.mailer.send_message(message)
+            logger.info(f"Successfully sent verification email to {email_to}")
+        except Exception as e:
+            logger.error(f"Failed to send verification email to {email_to}: {str(e)}")
+            raise
 
     async def send_reset_email(self, email_to: str, token: str):
+        logger.info(f"Sending password reset email to {email_to}")
         frontend = settings.FRONTEND_URL or "http://localhost:3000"
         reset_link = f"{frontend}/reset-password?token={token}"
 
@@ -61,4 +71,9 @@ class EmailService:
             body=html_content,
             subtype=MessageType.html
         )
-        await self.mailer.send_message(message)
+        try:
+            await self.mailer.send_message(message)
+            logger.info(f"Successfully sent password reset email to {email_to}")
+        except Exception as e:
+            logger.error(f"Failed to send password reset email to {email_to}: {str(e)}")
+            raise
