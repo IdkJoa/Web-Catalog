@@ -1,0 +1,41 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+exporters:
+  # Visualización de depuración en la consola del Collector
+  debug:
+    verbosity: detailed
+
+  # Exportador para Tempo (Trazas) usando gRPC nativo
+  otlp/tempo:
+    endpoint: "tempo:4317"
+    tls:
+      insecure: true
+
+  # Exportador para Loki (Logs) usando OTLP sobre HTTP
+  # Nota: Loki versión 2.4+ acepta OTLP directamente en el endpoint /otlp
+  otlphttp/loki:
+    endpoint: "http://loki:3100/otlp"
+    tls:
+      insecure: true
+
+processors:
+  batch:
+    send_batch_size: 1000
+    timeout: 10s
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp/tempo, debug]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlphttp/loki, debug]

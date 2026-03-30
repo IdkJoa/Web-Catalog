@@ -8,7 +8,10 @@ from app.routes.brand_routes import router as routes_brand
 from app.routes.condition_routes import router as routes_condition
 from app.routes.capacity_routes import router as routes_capacity
 from app.routes import auth_routes, testimonial_routes, social_network_routes
+from telemetry import setup_telemetry
 
+# Busca esta línea en tu archivo principal (main.py o donde inicialices el tracing)
+setup_telemetry("webcatalogo-service")
 app = FastAPI(
     title="Web'Catalog API",
     description="Backend API for managing products and content",

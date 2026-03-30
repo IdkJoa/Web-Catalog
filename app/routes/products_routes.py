@@ -1,35 +1,47 @@
-
+from opentelemetry import trace
+from opentelemetry.sdk.resources import Resource, SERVICE_NAME, logger
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from typing import List
 from uuid import UUID
-
 from fastapi import APIRouter,status,Depends, HTTPException
 from sqlalchemy.orm import Session
-
 from app.core.security import get_current_active_user
 from app.db.db_connection import get_db
 from app.schemas.products import ProductCreate, ProductOut, ProductUpdate
 from app.services.products_service import product_services
+
+tracer = trace.get_tracer(__name__)
 
 router = APIRouter(prefix="/products", tags=["products"],
                     responses = {status.HTTP_404_NOT_FOUND: {"message": "producto no encontrado"}})
 
 @router.get("/", response_model=List[ProductOut])
 def get_products(db: Session = Depends(get_db)):
-    try:
+    with tracer.start_as_current_span("get_products") as span:
+     try:
         products = product_services.get_multi(db)
 
         if products is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                                 detail="No hay productos activos")
-
+        with tracer.start_as_current_span("get_products") as span:
+            span.set_attribute("status", 200)
+            logger.info("productos devueltos con exito")
         return products
 
-    except HTTPException as http_exc:
+     except HTTPException as http_exc:
+        span.record_exception(http_exc)
+        span.set_status(trace.Status(trace.StatusCode.ERROR, str(http_exc)))
+        logger.error(f"Error en get_products: {str(http_exc)}")
         raise http_exc
-    except Exception as e:
+     except Exception as e:
+        span.record_exception(e)
+        span.set_status(trace.Status(trace.StatusCode.ERROR, str(e)))
+        logger.error(f"Error en get_products: {str(e)}")
 
         raise HTTPException(
-
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
 
             detail=f"Error interno: {str(e)}"
