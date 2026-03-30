@@ -16,7 +16,7 @@ def get_warranty(db: Session = Depends(get_db)):
     try:
         warranty = warranty_services.get_multi(db)
 
-        if warranty is None:
+        if warranty == []:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                                 detail="No hay warranty activas")
 

@@ -13,7 +13,7 @@ class Warrantyservices(CRUDBase[Warranty, WarrantyBase, WarrantyBase]):
         try:
          stmt = select(Warranty).where(Warranty.is_active == True).offset(skip).limit(limit).order_by(Warranty.created_at.desc())
          if stmt is None:
-             return None
+             return []
 
          return list(db.execute(stmt).scalars().all())
 
