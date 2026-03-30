@@ -1,4 +1,5 @@
-from typing import Any, List
+import logging
+from typing import Any, List, Optional
 from uuid import UUID
 
 from sqlalchemy import select
@@ -12,62 +13,64 @@ from app.services.category_service import category_service
 from app.services.condition_service import condition_services
 from app.services.warranty_service import warranty_services
 
+logger = logging.getLogger(__name__)
 
 class ProductsServices(CRUDBase[Product, ProductBase, ProductBase]):
     def get_multi(self, db: Session, *, skip: int = 0, limit: int = 100) -> List[Product]:
+        logger.debug(f"Fetching multiple products (skip={skip}, limit={limit})")
         try:
          stmt = select(Product).where(Product.is_active == True).offset(skip).limit(limit).order_by(Product.price.desc())
-         products = db.execute(stmt).scalar_one_or_none()
-
-         if products is None:
-             return None
-
-         return products
+         return list(db.execute(stmt).scalars().all())
         except Exception as e:
+         logger.error(f"Error listing products: {str(e)}")
          raise Exception(f"Error al listar Product: {str(e)}")
 
-    def get(self, db: Session, id: Any) -> Product:
+    def get(self, db: Session, id: Any) -> Optional[Product]:
+        logger.debug(f"Fetching product with id: {id}")
         try:
          stmt = (select(Product).where(Product.id == id, Product.is_active == True))
          products = db.execute(stmt).scalar_one_or_none()
 
          if products is None:
+            logger.debug(f"Product with id {id} not found")
             return None
 
          return products
         except Exception as e:
+            logger.error(f"Error fetching product with id {id}: {str(e)}")
             raise Exception(f"Error al devolver la Product: {str(e)}")
 
-    def get_byname(self, db: Session, model_name: Any) -> Product:
+    def get_byname(self, db: Session, model_name: Any) -> Optional[Product]:
+        logger.debug(f"Fetching product with model_name: {model_name}")
         try:
          stmt = (select(Product).where(Product.model_name == model_name, Product.is_active == True))
          products = db.execute(stmt).scalar_one_or_none()
 
          if products is None:
+            logger.debug(f"Product with model_name {model_name} not found")
             return None
 
          return products
         except Exception as e:
+            logger.error(f"Error fetching product with model_name {model_name}: {str(e)}")
             raise Exception(f"Error al devolver la producto: {str(e)}")
 
     """
     Fslta listar por ofertas, categoria, marca
     """
     def get_byoffer(self, db: Session, *, skip: int = 0, limit: int = 100) -> List[Product]:
+        logger.debug(f"Fetching products by offer (skip={skip}, limit={limit})")
         try:
          stmt = (select(Product).where(Product.is_active == True, Product.sale_price.isnot(None), Product.sale_price < Product.price, Product.sale_price > 0)
                  .offset(skip).limit(limit).order_by(Product.sale_price.desc()))
-         products = db.execute(stmt).scalar_one_or_none()
-
-         if products is None:
-             return None
-
-         return products
+         return list(db.execute(stmt).scalars().all())
 
         except Exception as e:
+         logger.error(f"Error listing products by offer: {str(e)}")
          raise Exception(f"Error al listar Product by offer: {str(e)}")
 
     def get_by_category(self, db: Session, category_id: UUID, *, skip: int = 0, limit: int = 100) -> List[Product]:
+        logger.debug(f"Fetching products by category_id: {category_id} (skip={skip}, limit={limit})")
         try:
             stmt = (
                 select(Product)
@@ -80,9 +83,11 @@ class ProductsServices(CRUDBase[Product, ProductBase, ProductBase]):
             )
             return list(db.execute(stmt).scalars().all())
         except Exception as e:
+            logger.error(f"Error listing products by category {category_id}: {str(e)}")
             raise Exception(f"Error al listar productos por categoria: {str(e)}")
 
     def get_by_brand(self, db: Session, brand_id: UUID, *, skip: int = 0, limit: int = 100) -> List[Product]:
+        logger.debug(f"Fetching products by brand_id: {brand_id} (skip={skip}, limit={limit})")
         try:
             stmt = (
                 select(Product)
@@ -95,9 +100,11 @@ class ProductsServices(CRUDBase[Product, ProductBase, ProductBase]):
             )
             return list(db.execute(stmt).scalars().all())
         except Exception as e:
+            logger.error(f"Error listing products by brand {brand_id}: {str(e)}")
             raise Exception(f"Error al listar productos por marca: {str(e)}")
 
-    def create(self, db: Session, *, obj_in: ProductCreate) -> ProductCreate:
+    def create(self, db: Session, *, obj_in: ProductCreate) -> Product:
+        logger.info(f"Creating new product: {obj_in.name}")
         try:
           category = category_service.get(db=db, id=obj_in.category_id)
           warranty =warranty_services.get(db=db, id=obj_in.warranty_id)
@@ -105,12 +112,16 @@ class ProductsServices(CRUDBase[Product, ProductBase, ProductBase]):
           condition = condition_services.get(db=db, id=obj_in.condition_id)
 
           if category is None:
+              logger.warning(f"Failed to create Product: Category {obj_in.category_id} not found")
               raise Exception("Category not found")
           if warranty is None:
+              logger.warning(f"Failed to create Product: Warranty {obj_in.warranty_id} not found")
               raise Exception("Warranty not found")
           if brand is None:
+              logger.warning(f"Failed to create Product: Brand {obj_in.brand_id} not found")
               raise Exception("Brand not found")
           if condition is None:
+              logger.warning(f"Failed to create Product: Condition {obj_in.condition_id} not found")
               raise Exception("Condition not found")
 
           db_obj = Product(
@@ -131,8 +142,10 @@ class ProductsServices(CRUDBase[Product, ProductBase, ProductBase]):
           db.add(db_obj)
           db.commit()
           db.refresh(db_obj)
+          logger.info(f"Successfully created product with id: {db_obj.id}")
           return db_obj
         except Exception as e:
+            logger.error(f"Error creating product: {str(e)}")
             raise Exception(f"Error al crear producto: {str(e)}")
 
 product_services = ProductsServices(model=Product)
