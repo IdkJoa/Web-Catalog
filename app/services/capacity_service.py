@@ -5,8 +5,8 @@ from sqlalchemy.orm import Session
 
 from app.base.crud_base import CRUDBase
 from app.models.models import Capacity
-from app.schemas.Capacity import CapacityCreate, CapacityBase
-from app.services.ProductsServices import product_services
+from app.schemas.capacity import CapacityCreate, CapacityBase
+from app.services.products_service import product_services
 
 
 class Capacityservices(CRUDBase[Capacity, CapacityCreate, CapacityBase]):

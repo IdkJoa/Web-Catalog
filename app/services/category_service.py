@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.base.crud_base import CRUDBase
 from app.models.models import Category
-from app.schemas.Category import CategoryBase
+from app.schemas.category import CategoryBase
 
 
 class Categoryservices(CRUDBase[Category, CategoryBase, CategoryBase]):

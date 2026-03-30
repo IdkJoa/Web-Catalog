@@ -15,3 +15,6 @@ class BrandBase(BaseModel):
 class BrandOut(BrandBase): #JD
     id: UUID
     model_config = ConfigDict(from_attributes=True)
+
+class BrandProductOut(BaseModel):
+    name: str = Field(max_length=50, min_length=3)

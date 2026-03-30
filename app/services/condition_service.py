@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.base.crud_base import CRUDBase
 from app.models.models import Condition
-from app.schemas.Condition import ConditionBase
+from app.schemas.condition import ConditionBase
 
 
 class Conditionservices(CRUDBase[Condition, ConditionBase, ConditionBase]):

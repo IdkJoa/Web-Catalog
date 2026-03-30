@@ -15,3 +15,6 @@ class ConditionBase(BaseModel): #JD
 class ConditionOut(ConditionBase):  # JD
     id: UUID
     model_config = ConfigDict(from_attributes=True)
+
+class ConditionProductsOut(BaseModel):  # JD
+    name: str = Field(max_length=50, min_length=3)

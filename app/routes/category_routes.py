@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session
 
 from app.core.security import get_current_active_user
 from app.db.db_connection import get_db
-from app.schemas.Category import CategoryBase, CategoryOut
-from app.services.Categoryservices import category_service
+from app.schemas.category import CategoryBase, CategoryOut
+from app.services.category_service import category_service
 
 router = APIRouter(prefix="/category", tags=["category"],
                     responses = {status.HTTP_404_NOT_FOUND: {"message": "category no encontrado"}})

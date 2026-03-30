@@ -15,3 +15,6 @@ class CapacityOut(CapacityBase): #JD
     id: UUID
     product_id: UUID
     model_config = ConfigDict(from_attributes=True)
+
+class CapacityProductOut(BaseModel):
+    capacity: str

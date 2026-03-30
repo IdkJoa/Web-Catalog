@@ -5,11 +5,11 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field, ConfigDict
 
-from app.schemas.Brand import BrandOut
-from app.schemas.Capacity import CapacityOut
-from app.schemas.Category import CategoryOut
-from app.schemas.Condition import ConditionOut
-from app.schemas.Warranty import WarrantyOut
+from app.schemas.brand import BrandProductOut
+from app.schemas.capacity import CapacityOut, CapacityProductOut
+from app.schemas.category import CategoryProductsOut
+from app.schemas.condition import ConditionProductsOut
+from app.schemas.warranty import WarrantyProductsOut
 
 
 class ProductBase(BaseModel):  # JD
@@ -49,11 +49,11 @@ class ProductUpdate(BaseModel):  # JD
 class ProductOut(ProductBase):  # JD
     id: UUID
     updated_at: datetime
-    category: Optional[CategoryOut] = None
-    brand: Optional[BrandOut] = None
-    condition: Optional[ConditionOut] = None
-    warranty: Optional[WarrantyOut] = None
-    capacities: List[CapacityOut] = []
+    category: Optional[CategoryProductsOut] = None
+    brand: Optional[BrandProductOut] = None
+    condition: Optional[ConditionProductsOut] = None
+    warranty: Optional[WarrantyProductsOut] = None
+    capacities: List[CapacityProductOut] = []
     meta_title: Optional[str] = Field(None, max_length=100)
     meta_description: Optional[str] = Field(None, max_length=160)
     meta_keywords: Optional[str] = Field(None, max_length=255)
