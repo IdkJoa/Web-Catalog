@@ -17,12 +17,10 @@ class ProductsServices(CRUDBase[Product, ProductBase, ProductBase]):
     def get_multi(self, db: Session, *, skip: int = 0, limit: int = 100) -> List[Product]:
         try:
          stmt = select(Product).where(Product.is_active == True).offset(skip).limit(limit).order_by(Product.price.desc())
-         products = db.execute(stmt).scalar_one_or_none()
-
-         if products is None:
+         if stmt is None:
              return None
 
-         return products
+         return list(db.execute(stmt).scalars().all())
         except Exception as e:
          raise Exception(f"Error al listar Product: {str(e)}")
 
@@ -57,12 +55,10 @@ class ProductsServices(CRUDBase[Product, ProductBase, ProductBase]):
         try:
          stmt = (select(Product).where(Product.is_active == True, Product.sale_price.isnot(None), Product.sale_price < Product.price, Product.sale_price > 0)
                  .offset(skip).limit(limit).order_by(Product.sale_price.desc()))
-         products = db.execute(stmt).scalar_one_or_none()
-
-         if products is None:
+         if stmt is None:
              return None
 
-         return products
+         return list(db.execute(stmt).scalars().all())
 
         except Exception as e:
          raise Exception(f"Error al listar Product by offer: {str(e)}")
@@ -78,6 +74,9 @@ class ProductsServices(CRUDBase[Product, ProductBase, ProductBase]):
                 .offset(skip).limit(limit)
                 .order_by(Product.price.desc())
             )
+            if stmt is None:
+                return None
+
             return list(db.execute(stmt).scalars().all())
         except Exception as e:
             raise Exception(f"Error al listar productos por categoria: {str(e)}")

@@ -14,7 +14,7 @@ class Categoryservices(CRUDBase[Category, CategoryBase, CategoryBase]):
         try:
          stmt = select(Category).where(Category.is_active == True).offset(skip).limit(limit).order_by(Category.sort_order.desc())
          if stmt is None:
-             return []
+             return None
 
          return list(db.execute(stmt).scalars().all())
 
