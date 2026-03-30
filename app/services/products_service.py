@@ -17,35 +17,36 @@ class ProductsServices(CRUDBase[Product, ProductBase, ProductBase]):
     def get_multi(self, db: Session, *, skip: int = 0, limit: int = 100) -> List[Product]:
         try:
          stmt = select(Product).where(Product.is_active == True).offset(skip).limit(limit).order_by(Product.price.desc())
-         if stmt is None:
-             return []
+         products = db.execute(stmt).scalar_one_or_none()
 
-         return list(db.execute(stmt).scalars().all())
+         if products is None:
+             return None
 
+         return products
         except Exception as e:
          raise Exception(f"Error al listar Product: {str(e)}")
 
     def get(self, db: Session, id: Any) -> Product:
         try:
          stmt = (select(Product).where(Product.id == id, Product.is_active == True))
-         category = db.execute(stmt).scalar_one_or_none()
+         products = db.execute(stmt).scalar_one_or_none()
 
-         if category is None:
+         if products is None:
             return None
 
-         return category
+         return products
         except Exception as e:
             raise Exception(f"Error al devolver la Product: {str(e)}")
 
     def get_byname(self, db: Session, model_name: Any) -> Product:
         try:
          stmt = (select(Product).where(Product.model_name == model_name, Product.is_active == True))
-         category = db.execute(stmt).scalar_one_or_none()
+         products = db.execute(stmt).scalar_one_or_none()
 
-         if category is None:
+         if products is None:
             return None
 
-         return category
+         return products
         except Exception as e:
             raise Exception(f"Error al devolver la producto: {str(e)}")
 
@@ -56,10 +57,12 @@ class ProductsServices(CRUDBase[Product, ProductBase, ProductBase]):
         try:
          stmt = (select(Product).where(Product.is_active == True, Product.sale_price.isnot(None), Product.sale_price < Product.price, Product.sale_price > 0)
                  .offset(skip).limit(limit).order_by(Product.sale_price.desc()))
-         if stmt is None:
-             return []
+         products = db.execute(stmt).scalar_one_or_none()
 
-         return list(db.execute(stmt).scalars().all())
+         if products is None:
+             return None
+
+         return products
 
         except Exception as e:
          raise Exception(f"Error al listar Product by offer: {str(e)}")
