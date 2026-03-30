@@ -27,7 +27,7 @@ def get_products(db: Session = Depends(get_db)):
         try:
             products = product_services.get_multi(db)
 
-            if products is None:
+            if products == []:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
                     detail="No hay productos activos",

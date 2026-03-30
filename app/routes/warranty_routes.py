@@ -1,5 +1,5 @@
 import logging
-from typing import List, Optional
+from typing import List
 from uuid import UUID
 
 from fastapi import APIRouter,status,Depends, HTTPException
@@ -24,7 +24,6 @@ def get_warranties(db: Session = Depends(get_db)):
             logger.info("No active warranties found")
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                                 detail="No hay warranty activas")
-
         return warranty
 
     except HTTPException as http_exc:
@@ -93,7 +92,7 @@ def update_warranty(warranty: WarrantyBase, id: UUID, db: Session = Depends(get_
         updated_warranty = warranty_services.update(db,db_obj=warranty_exist, obj_in=warranty)
         logger.info(f"Warranty {id} updated successfully")
 
-        return updated_brand
+        return updated_warranty
 
     except HTTPException as http_exc:
         raise http_exc

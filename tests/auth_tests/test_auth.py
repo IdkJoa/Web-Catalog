@@ -76,7 +76,7 @@ def test_confirm_user():
     mock_db = MagicMock(spec=Session)
 
     # Set up an unconfirmed user
-    unconfirmed_user = AdminUser(email="test@example.com", is_confirmed=False)
+    unconfirmed_user = AdminUser(email="products_agregate_tests@example.com", is_confirmed=False)
 
     # Execute the service
     confirmed_user = admin.confirm_user(db=mock_db, db_obj=unconfirmed_user)

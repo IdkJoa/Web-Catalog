@@ -81,7 +81,7 @@ def test_decode_tampered_token():
 
 # DEPENDENCY TESTS (Without Database)
 
-# To test get_current_active_user without a database, we use a fake Python object
+# To products_agregate_tests get_current_active_user without a database, we use a fake Python object
 class FakeUser:
     def __init__(self, is_active: bool, is_confirmed: bool):
         self.is_active = is_active

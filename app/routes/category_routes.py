@@ -26,7 +26,7 @@ def get_categories(db: Session = Depends(get_db)):
         try:
             categories = category_service.get_multi(db)
 
-            if categories is None:
+            if categories == []:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
                     detail="No hay categories activas",
