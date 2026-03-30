@@ -55,6 +55,16 @@ def get_all_subscribers(
 ):
     return subscriber_service.get_all_no_filtered(db=db, skip=skip, limit=limit)
 
+@router.get("/subscriber/{id}", response_model=SubscriberOut, dependencies=[Depends(get_current_active_user)])
+def get_subscriber(
+        id: uuid.UUID,
+        db: Session = Depends(get_db)
+):
+    sub = subscriber_service.get(db=db, id=id)
+    if not sub:
+        raise HTTPException(status_code=404, detail="Subscriber not found.")
+    return sub
+
 @router.post("/send-email-batch", status_code=status.HTTP_202_ACCEPTED, dependencies=[Depends(get_current_active_user)])
 def send_newsletter_blast(
         blast_in: EmailDraft,
