@@ -13,12 +13,12 @@ from app.services.subscriber_service import subscriber_service
 def test_create_subscriber():
     """Test successfully creating a subscriber."""
     mock_db = MagicMock(spec=Session)
-    subscriber_in = SubscriberCreate(email="test@example.com")
+    subscriber_in = SubscriberCreate(email="products_agregate_tests@example.com")
     
     # CRUDBase.create uses jsonable_encoder and then instantiates the model
     created_subscriber = subscriber_service.create(db=mock_db, obj_in=subscriber_in)
     
-    assert created_subscriber.email == "test@example.com"
+    assert created_subscriber.email == "products_agregate_tests@example.com"
     mock_db.add.assert_called_once()
     mock_db.commit.assert_called_once()
     mock_db.refresh.assert_called_once()

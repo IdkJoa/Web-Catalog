@@ -57,15 +57,15 @@ def test_site_settings_get_multi():
     mock_db = MagicMock(spec=Session)
 
     fake_list = [
-        SiteSetting(id=1, email="siteA@test.com", is_active=True),
-        SiteSetting(id=2, email="siteB@test.com", is_active=True)
+        SiteSetting(id=1, email="siteA@products_agregate_tests.com", is_active=True),
+        SiteSetting(id=2, email="siteB@products_agregate_tests.com", is_active=True)
     ]
     mock_db.execute.return_value.scalars.return_value.all.return_value = fake_list
 
     results = site_settings_service.get_multi(db=mock_db, skip=0, limit=10)
 
     assert len(results) == 2
-    assert results[0].email == "siteA@test.com"
+    assert results[0].email == "siteA@products_agregate_tests.com"
 
 
 # ==========================================
@@ -93,7 +93,7 @@ def test_site_settings_get_all_no_filtered():
 def test_site_settings_update():
     mock_db = MagicMock(spec=Session)
 
-    db_obj = SiteSetting(id=1, email="old@test.com", whatsapp="000")
+    db_obj = SiteSetting(id=1, email="old@products_agregate_tests.com", whatsapp="000")
 
     # We only update the whatsapp number, the email should stay the same
     update_data = SiteSettingsUpdate(whatsapp="+999999999")
@@ -101,7 +101,7 @@ def test_site_settings_update():
     result = site_settings_service.update(db=mock_db, db_obj=db_obj, obj_in=update_data)
 
     assert result.whatsapp == "+999999999"
-    assert result.email == "old@test.com"  # Stays untouched
+    assert result.email == "old@products_agregate_tests.com"  # Stays untouched
 
     mock_db.add.assert_called_with(db_obj)
     mock_db.commit.assert_called_once()

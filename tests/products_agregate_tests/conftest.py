@@ -3,8 +3,8 @@ conftest.py — Fixtures compartidos para todos los tests.
 
 Estrategia:
 - SQLite en memoria compartida (URI con cache=shared) para que el engine
-  del test y el engine de la app usen la misma base de datos.
-- Se parchea app.db.db_connection con el engine y SessionLocal de test
+  del products_agregate_tests y el engine de la app usen la misma base de datos.
+- Se parchea app.db.db_connection con el engine y SessionLocal de products_agregate_tests
   ANTES de importar main, de modo que cada request de FastAPI use la
   misma sesión que los fixtures.
 - Override de get_current_active_user para simular auth.
@@ -21,21 +21,21 @@ from sqlalchemy.orm import sessionmaker
 # ── Variables de entorno mínimas para que Settings no falle ──────────────────
 import os
 os.environ.update({
-    "SECRET_KEY": "test-secret-key",
+    "SECRET_KEY": "products_agregate_tests-secret-key",
     "ALGORITHM": "HS256",
     "ACCESS_TOKEN_EXPIRE_MINUTES": "60",
     "EMAIL_TOKEN_EXPIRE_HOURS": "24",
     "RESET_PASSWORD_TOKEN_EXPIRE_MINUTES": "15",
     "SMTP_HOST": "localhost",
     "SMTP_PORT": "587",
-    "SMTP_USER": "test@test.com",
+    "SMTP_USER": "products_agregate_tests@products_agregate_tests.com",
     "SMTP_PASSWORD": "testpassword",
-    "EMAILS_FROM": "test@test.com",
+    "EMAILS_FROM": "products_agregate_tests@products_agregate_tests.com",
     "FRONTEND_URL": "http://localhost:3000",
     "db_connection_url": "sqlite:///:memory:",
 })
 
-# ── Engine de test (SQLite en memoria, misma conexión compartida) ─────────────
+# ── Engine de products_agregate_tests (SQLite en memoria, misma conexión compartida) ─────────────
 SQLITE_URL = "sqlite:///file:testdb?mode=memory&cache=shared&uri=true"
 
 engine = create_engine(
@@ -62,7 +62,7 @@ from app.core.security import get_current_active_user
 from main import app
 
 
-# ── Setup / teardown de tablas por cada test ──────────────────────────────────
+# ── Setup / teardown de tablas por cada products_agregate_tests ──────────────────────────────────
 @pytest.fixture(autouse=True)
 def setup_database():
     Base.metadata.create_all(bind=engine)
@@ -70,7 +70,7 @@ def setup_database():
     Base.metadata.drop_all(bind=engine)
 
 
-# ── Sesión de DB de test ──────────────────────────────────────────────────────
+# ── Sesión de DB de products_agregate_tests ──────────────────────────────────────────────────────
 @pytest.fixture
 def db():
     session = TestingSessionLocal()

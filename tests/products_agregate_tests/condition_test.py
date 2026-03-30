@@ -3,7 +3,7 @@ import uuid
 from app.models.models import Condition
 
 
-class TestGetConditions:
+class testGetConditions:
     def test_returns_active_conditions(self, client, condition):
         response = client.get("/condition/")
         assert response.status_code == 200
@@ -33,7 +33,7 @@ class TestGetConditions:
             assert field in item
 
 
-class TestGetConditionById:
+class testGetConditionById:
     def test_returns_condition_by_id(self, client, condition):
         response = client.get(f"/condition/{condition.id}")
         assert response.status_code == 200
@@ -55,7 +55,7 @@ class TestGetConditionById:
         assert response.status_code == 422
 
 
-class TestCreateCondition:
+class testCreateCondition:
     def test_creates_condition_successfully(self, client):
         payload = {"name": "Usado", "description": "Buen estado", "sort_order": 2, "is_active": True}
         response = client.post("/condition/create", json=payload)
@@ -92,7 +92,7 @@ class TestCreateCondition:
         assert response.json()["description"] == "Una descripcion"
 
 
-class TestUpdateCondition:
+class testUpdateCondition:
     def test_updates_condition_successfully(self, client, condition):
         # ConditionBase requiere name, description, sort_order, is_active
         payload = {"name": "Nuevo Actualizado", "description": "Actualizado", "sort_order": 5, "is_active": True}

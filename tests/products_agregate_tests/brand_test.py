@@ -3,7 +3,7 @@ import uuid
 from app.models.models import Brand
 
 
-class TestGetBrands:
+class testGetBrands:
     def test_returns_active_brands(self, client, brand):
         response = client.get("/brand/")
         assert response.status_code == 200
@@ -27,7 +27,7 @@ class TestGetBrands:
             assert field in item
 
 
-class TestGetBrandById:
+class testGetBrandById:
     def test_returns_brand_by_id(self, client, brand):
         response = client.get(f"/brand/{brand.id}")
         assert response.status_code == 200
@@ -49,7 +49,7 @@ class TestGetBrandById:
         assert response.status_code == 422
 
 
-class TestCreateBrand:
+class testCreateBrand:
     def test_creates_brand_successfully(self, client):
         payload = {"name": "Lenovo", "slug": "lenovo", "is_active": True}
         response = client.post("/brand/create", json=payload)
@@ -75,7 +75,7 @@ class TestCreateBrand:
         assert response.status_code == 401
 
 
-class TestUpdateBrand:
+class testUpdateBrand:
     def test_updates_brand_successfully(self, client, brand):
         payload = {"name": "Dell Technologies", "slug": "dell-technologies", "is_active": True}
         response = client.put(f"/brand/update/{brand.id}", json=payload)
@@ -93,7 +93,7 @@ class TestUpdateBrand:
         assert response.status_code == 401
 
 
-class TestDeleteBrand:
+class testDeleteBrand:
     def test_soft_deletes_brand(self, client, db, brand):
         response = client.delete(f"/brand/delete/{brand.id}")
         assert response.status_code == 200

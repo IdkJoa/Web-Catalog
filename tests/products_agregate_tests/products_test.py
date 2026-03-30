@@ -22,7 +22,7 @@ from app.models.models import Product
 # GET /products/
 # ---------------------------------------------------------------------------
 
-class TestGetProducts:
+class testGetProducts:
     def test_returns_active_products(self, client, product):
         response = client.get("/products/")
         assert response.status_code == 200
@@ -79,7 +79,7 @@ class TestGetProducts:
 # GET /products/offers
 # ---------------------------------------------------------------------------
 
-class TestGetOffers:
+class testGetOffers:
     def test_returns_products_with_sale_price(self, client, product):
         # product fixture has sale_price < price
         response = client.get("/products/offers")
@@ -122,7 +122,7 @@ class TestGetOffers:
 # GET /products/{id}
 # ---------------------------------------------------------------------------
 
-class TestGetProductById:
+class testGetProductById:
     def test_returns_product_by_id(self, client, product):
         response = client.get(f"/products/{product.id}")
         assert response.status_code == 200
@@ -154,7 +154,7 @@ class TestGetProductById:
 # GET /products/category/{category_id}
 # ---------------------------------------------------------------------------
 
-class TestGetByCategory:
+class testGetByCategory:
     def test_returns_products_for_category(self, client, product, category):
         response = client.get(f"/products/category/{category.id}")
         assert response.status_code == 200
@@ -193,7 +193,7 @@ class TestGetByCategory:
 # GET /products/brand/{brand_id}
 # ---------------------------------------------------------------------------
 
-class TestGetByBrand:
+class testGetByBrand:
     def test_returns_products_for_brand(self, client, product, brand):
         response = client.get(f"/products/brand/{brand.id}")
         assert response.status_code == 200
@@ -230,7 +230,7 @@ class TestGetByBrand:
 # POST /products/create
 # ---------------------------------------------------------------------------
 
-class TestCreateProduct:
+class testCreateProduct:
     def test_creates_product_successfully(self, client, product_payload):
         response = client.post("/products/create", json=product_payload)
         assert response.status_code == 200
@@ -280,7 +280,7 @@ class TestCreateProduct:
 # PUT /products/update/{id}
 # ---------------------------------------------------------------------------
 
-class TestUpdateProduct:
+class testUpdateProduct:
     def test_updates_product_name(self, client, product):
         payload = {
             "name": "Dell XPS 17 Updated",
@@ -371,7 +371,7 @@ class TestUpdateProduct:
 # DELETE /products/delete/{id}
 # ---------------------------------------------------------------------------
 
-class TestDeleteProduct:
+class testDeleteProduct:
     def test_soft_deletes_product(self, client, db, product):
         response = client.delete(f"/products/delete/{product.id}")
         assert response.status_code == 200

@@ -8,7 +8,7 @@ import uuid
 from app.models.models import Warranty
 
 
-class TestGetWarranties:
+class testGetWarranties:
     def test_returns_active_warranties(self, client, warranty):
         response = client.get("/warranty/")
         assert response.status_code == 200
@@ -38,7 +38,7 @@ class TestGetWarranties:
             assert field in item
 
 
-class TestGetWarrantyById:
+class testGetWarrantyById:
     def test_returns_warranty_by_id(self, client, warranty):
         response = client.get(f"/warranty/{warranty.id}")
         assert response.status_code == 200
@@ -60,7 +60,7 @@ class TestGetWarrantyById:
         assert response.status_code == 422
 
 
-class TestCreateWarranty:
+class testCreateWarranty:
     def test_creates_warranty_successfully(self, client):
         payload = {"duration": "6 meses", "is_active": True}
         response = client.post("/warranty/create", json=payload)
@@ -87,7 +87,7 @@ class TestCreateWarranty:
         assert response.status_code == 401
 
 
-class TestUpdateWarranty:
+class testUpdateWarranty:
     def test_updates_warranty_successfully(self, client, warranty):
         payload = {"duration": "18 meses", "is_active": True}
         response = client.put(f"/warranty/update/{warranty.id}", json=payload)

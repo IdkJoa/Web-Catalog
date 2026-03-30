@@ -3,7 +3,7 @@ import uuid
 from app.models.models import Category
 
 
-class TestGetCategories:
+class testGetCategories:
     def test_returns_active_categories(self, client, category):
         response = client.get("/category/")
         assert response.status_code == 200
@@ -28,7 +28,7 @@ class TestGetCategories:
             assert field in item
 
 
-class TestGetCategoryById:
+class testGetCategoryById:
     def test_returns_category_by_id(self, client, category):
         response = client.get(f"/category/{category.id}")
         assert response.status_code == 200
@@ -50,7 +50,7 @@ class TestGetCategoryById:
         assert response.status_code == 422
 
 
-class TestCreateCategory:
+class testCreateCategory:
     def test_creates_category_successfully(self, client):
         payload = {
             "name": "Tablets de Alta Gama",
@@ -92,12 +92,12 @@ class TestCreateCategory:
         assert response.status_code == 422
 
     def test_requires_authentication(self, client_no_auth):
-        payload = {"name": "Test", "slug": "test", "sort_order": 1, "is_active": True}
+        payload = {"name": "Test", "slug": "products_agregate_tests", "sort_order": 1, "is_active": True}
         response = client_no_auth.post("/category/create", json=payload)
         assert response.status_code == 401
 
 
-class TestUpdateCategory:
+class testUpdateCategory:
     def test_updates_category_successfully(self, client, category):
         # slug es requerido en CategoryBase
         payload = {
@@ -136,7 +136,7 @@ class TestUpdateCategory:
         assert response.status_code == 401
 
 
-class TestDeleteCategory:
+class testDeleteCategory:
     def test_soft_deletes_category(self, client, db, category):
         response = client.delete(f"/category/delete/{category.id}")
         assert response.status_code == 200

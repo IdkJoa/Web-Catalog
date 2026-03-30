@@ -3,7 +3,7 @@ import uuid
 from app.models.models import Capacity
 
 
-class TestGetCapacities:
+class testGetCapacities:
     def test_returns_active_capacities(self, client, db, product):
         db.add(Capacity(id=uuid.uuid4(), product_id=product.id, capacity="256GB", is_active=True))
         db.commit()
@@ -30,7 +30,7 @@ class TestGetCapacities:
             assert field in item
 
 
-class TestGetCapacityById:
+class testGetCapacityById:
     def test_returns_capacity_by_id(self, client, db, product):
         cap = Capacity(id=uuid.uuid4(), product_id=product.id, capacity="1TB", is_active=True)
         db.add(cap)
@@ -55,7 +55,7 @@ class TestGetCapacityById:
         assert response.status_code == 422
 
 
-class TestCreateCapacity:
+class testCreateCapacity:
     def test_creates_capacity_successfully(self, client, product):
         payload = {"capacity": "512GB", "product_id": str(product.id), "is_active": True}
         response = client.post("/capacity/create", json=payload)
@@ -90,7 +90,7 @@ class TestCreateCapacity:
         assert response.status_code == 401
 
 
-class TestUpdateCapacity:
+class testUpdateCapacity:
     def test_updates_capacity_successfully(self, client, db, product):
         cap = Capacity(id=uuid.uuid4(), product_id=product.id, capacity="128GB", is_active=True)
         db.add(cap)
@@ -124,7 +124,7 @@ class TestUpdateCapacity:
         assert cap.is_active is False
 
 
-class TestDeleteCapacity:
+class testDeleteCapacity:
     def test_soft_deletes_capacity(self, client, db, product):
         cap = Capacity(id=uuid.uuid4(), product_id=product.id, capacity="16GB", is_active=True)
         db.add(cap)
