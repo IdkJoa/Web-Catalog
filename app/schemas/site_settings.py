@@ -8,9 +8,9 @@ class SiteSettingsBase(BaseModel):
     whatsapp: str = Field(..., max_length=15)
     address: str = Field(..., max_length=50)
     email: EmailStr = Field(..., max_length=50)
-    meta_title: str = Field(..., max_length=50)
-    meta_description: str = Field(..., max_length=50)
-    meta_keywords: str = Field(..., max_length=50)
+    meta_title: str = Field(max_length=50)
+    meta_description: str = Field(max_length=50)
+    meta_keywords: str = Field(max_length=50)
 
 class SiteSettingsCreate(SiteSettingsBase):
     pass
