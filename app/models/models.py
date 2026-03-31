@@ -1,6 +1,8 @@
 import uuid
 from datetime import datetime
 from typing import List, Optional
+
+from pydantic import HttpUrl
 from sqlalchemy import String, Text, Numeric, ForeignKey, DateTime, Boolean, Integer, text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
@@ -160,7 +162,7 @@ class SocialNetwork(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(String(100))
-    url: Mapped[str] = mapped_column(String(255))
+    url: Mapped[HttpUrl] = mapped_column(String(255))
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=text("true"))
 
 
