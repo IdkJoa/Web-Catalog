@@ -1,7 +1,11 @@
 import pytest
+from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
+
+from main import app
+from app.db.db_connection import get_db
 from app.models.models import Base
 
 # --- Use an in-memory SQLite DB for fast integration tests ---
@@ -32,3 +36,17 @@ def db_session(engine):
     session.close()
     transaction.rollback()
     connection.close()
+
+@pytest.fixture(scope="function")
+def client(db_session):
+    """Provides a TestClient with a database dependency override."""
+    def override_get_db():
+        try:
+            yield db_session
+        finally:
+            pass # Session is closed by the db_session fixture
+
+    app.dependency_overrides[get_db] = override_get_db
+    with TestClient(app) as c:
+        yield c
+    app.dependency_overrides.clear()
