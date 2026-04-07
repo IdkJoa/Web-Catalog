@@ -84,7 +84,7 @@ def get_condition_by_id(id: UUID, db: Session = Depends(get_db)):
             )
 
 
-@router.post("/create", response_model=ConditionOut, dependencies=[Depends(get_current_active_user)])
+@router.post("/create", response_model=ConditionOut)
 def create_condition(condition: ConditionBase, db: Session = Depends(get_db)):
     with tracer.start_as_current_span("create_condition") as span:
         try:
@@ -119,7 +119,7 @@ def create_condition(condition: ConditionBase, db: Session = Depends(get_db)):
             )
 
 
-@router.put("/update/{id}", response_model=ConditionOut, dependencies=[Depends(get_current_active_user)])
+@router.put("/update/{id}", response_model=ConditionOut)
 def update_condition(condition: ConditionBase, id: UUID, db: Session = Depends(get_db)):
     with tracer.start_as_current_span("update_condition") as span:
         try:
@@ -153,7 +153,7 @@ def update_condition(condition: ConditionBase, id: UUID, db: Session = Depends(g
             )
 
 
-@router.delete("/delete/{id}", response_model=ConditionOut, dependencies=[Depends(get_current_active_user)])
+@router.delete("/delete/{id}", response_model=ConditionOut)
 def delete_condition(id: UUID, db: Session = Depends(get_db)):
     with tracer.start_as_current_span("delete_condition") as span:
         try:

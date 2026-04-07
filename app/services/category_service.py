@@ -1,5 +1,10 @@
+import os
+import shutil
+import uuid
 from typing import List, Any
 
+from dotenv import load_dotenv
+from fastapi import UploadFile
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -7,8 +12,33 @@ from app.base.crud_base import CRUDBase
 from app.models.models import Category
 from app.schemas.category import CategoryBase
 
-
+load_dotenv()
+UPLOAD_DIR = os.getenv("UPLOAD_DIR")
+BACKEND_DIR = os.getenv("BACKEND_DIR")
 class Categoryservices(CRUDBase[Category, CategoryBase, CategoryBase]):
+
+
+    def save_category_image(self, file: UploadFile) -> str:
+        """Valida y guarda una imagen en disco, devolviendo su URL relativa."""
+        dir_products = UPLOAD_DIR + "/category"
+        if not os.path.exists(dir_products):
+            os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+        print(dir_products)
+        allowed_extensions = ["jpg", "jpeg", "png", "webp"]
+        extension = file.filename.split(".")[-1].lower()
+
+        if extension not in allowed_extensions:
+            raise Exception( f"Extensión no permitida. Use: {allowed_extensions}")
+
+        unique_filename = f"{uuid.uuid4()}.{extension}"
+        file_path = os.path.join(dir_products, unique_filename)
+
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+
+        return f"{BACKEND_DIR}/category/{unique_filename}"
+
 
     def get_multi(self, db: Session, *, skip: int = 0, limit: int = 100) -> List[Category]:
         try:

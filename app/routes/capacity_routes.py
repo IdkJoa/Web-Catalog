@@ -84,18 +84,19 @@ def get_capacity_by_id(id: UUID, db: Session = Depends(get_db)):
             )
 
 
-@router.post("/create", response_model=CapacityOut, dependencies=[Depends(get_current_active_user)])
+@router.post("/create", response_model=CapacityOut)
 def create_capacity(capacity: CapacityCreate, db: Session = Depends(get_db)):
     with tracer.start_as_current_span("create_capacity") as span:
         try:
             span.set_attribute("capacity.value", str(capacity.capacity))
-            exist = capacity_services.get_byname(db, capacity.capacity)
+            exist = capacity_services.get_byprodutcsid(db, capacity.product_id, capacity.capacity)
 
             if exist:
-                raise HTTPException(
+                if exist.is_active:
+                 raise HTTPException(
                     status_code=status.HTTP_409_CONFLICT,
-                    detail="capacity existente",
-                )
+                     detail="capacity existente",
+                 )
 
             new_capacity = capacity_services.create(db=db, obj_in=capacity)
 
@@ -119,7 +120,7 @@ def create_capacity(capacity: CapacityCreate, db: Session = Depends(get_db)):
             )
 
 
-@router.put("/update/{id}", response_model=CapacityOut, dependencies=[Depends(get_current_active_user)])
+@router.put("/update/{id}", response_model=CapacityOut)
 def update_capacity(id: UUID, capacity: CapacityBase, db: Session = Depends(get_db)):
     with tracer.start_as_current_span("update_capacity") as span:
         try:
@@ -153,7 +154,7 @@ def update_capacity(id: UUID, capacity: CapacityBase, db: Session = Depends(get_
             )
 
 
-@router.delete("/delete/{id}", response_model=CapacityOut, dependencies=[Depends(get_current_active_user)])
+@router.delete("/delete/{id}", response_model=CapacityOut)
 def delete_capacity(id: UUID, db: Session = Depends(get_db)):
     with tracer.start_as_current_span("delete_capacity") as span:
         try:

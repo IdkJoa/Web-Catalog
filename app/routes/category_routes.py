@@ -2,13 +2,17 @@ from opentelemetry import trace
 from opentelemetry.sdk.resources import logger
 from typing import List
 from uuid import UUID
-
+import os
+import shutil
+import uuid
+from fastapi import APIRouter, UploadFile, File, HTTPException, status
+from opentelemetry import trace
 from fastapi import APIRouter, status, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.core.security import get_current_active_user
 from app.db.db_connection import get_db
-from app.schemas.category import CategoryBase, CategoryOut
+from app.schemas.category import CategoryBase, CategoryOut, CategoryCreate
 from app.services.category_service import category_service
 
 tracer = trace.get_tracer(__name__)
@@ -83,43 +87,56 @@ def get_category_by_id(id: UUID, db: Session = Depends(get_db)):
                 detail=f"Error interno: {str(e)}",
             )
 
-
-@router.post("/create", response_model=CategoryOut, dependencies=[Depends(get_current_active_user)])
-def create_category(category: CategoryBase, db: Session = Depends(get_db)):
+@router.post("/create", response_model=CategoryOut)
+def create_category(category: CategoryCreate = Depends(),db: Session = Depends(get_db)):
     with tracer.start_as_current_span("create_category") as span:
-        try:
-            span.set_attribute("category.name", category.name)
-            exist = category_service.get_byname(db, category.name)
+            try:
+                span.set_attribute("category.name", category.name)
+                exist = category_service.get_byname(db, category.name)
 
-            if exist is not None:
+                if exist is not None:
+                    raise HTTPException(
+                        status_code=status.HTTP_409_CONFLICT,
+                        detail="Category existe",
+                    )
+
+                image_url = category_service.save_category_image(category.image)
+                print(image_url)
+                span.set_attribute("file.path", image_url)
+
+                category_data = CategoryBase(
+                    name=category.name,
+                    description=category.description,
+                    slug=category.slug,
+                    sort_order=category.sort_order,
+                    image_url=image_url,
+                    meta_description=category.meta_description,
+                    meta_title=category.meta_title,
+                    meta_keywords=category.meta_keywords,
+                )
+                new_category = category_service.create(db, obj_in=category_data)
+
+                span.set_attribute("http.status_code", 201)
+                span.set_attribute("category.id", str(new_category.id))
+                logger.info(f"Categoría '{category.name}' creada con éxito (id={new_category.id})")
+                return new_category
+
+            except HTTPException as http_exc:
+                span.record_exception(http_exc)
+                span.set_status(trace.Status(trace.StatusCode.ERROR, str(http_exc.detail)))
+                logger.error(f"Error HTTP en create_category (name={category.name}): {http_exc.detail}")
+                raise http_exc
+            except Exception as e:
+                span.record_exception(e)
+                span.set_status(trace.Status(trace.StatusCode.ERROR, str(e)))
+                logger.error(f"Error inesperado en create_category (name={category.name}): {str(e)}")
                 raise HTTPException(
-                    status_code=status.HTTP_409_CONFLICT,
-                    detail="Category existe",
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=f"Error interno: {str(e)}",
                 )
 
-            new_category = category_service.create(db, obj_in=category)
 
-            span.set_attribute("http.status_code", 201)
-            span.set_attribute("category.id", str(new_category.id))
-            logger.info(f"Categoría '{category.name}' creada con éxito (id={new_category.id})")
-            return new_category
-
-        except HTTPException as http_exc:
-            span.record_exception(http_exc)
-            span.set_status(trace.Status(trace.StatusCode.ERROR, str(http_exc.detail)))
-            logger.error(f"Error HTTP en create_category (name={category.name}): {http_exc.detail}")
-            raise http_exc
-        except Exception as e:
-            span.record_exception(e)
-            span.set_status(trace.Status(trace.StatusCode.ERROR, str(e)))
-            logger.error(f"Error inesperado en create_category (name={category.name}): {str(e)}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Error interno: {str(e)}",
-            )
-
-
-@router.put("/update/{id}", response_model=CategoryOut, dependencies=[Depends(get_current_active_user)])
+@router.put("/update/{id}", response_model=CategoryOut)
 def update_category(category: CategoryBase, id: UUID, db: Session = Depends(get_db)):
     with tracer.start_as_current_span("update_category") as span:
         try:
@@ -153,7 +170,7 @@ def update_category(category: CategoryBase, id: UUID, db: Session = Depends(get_
             )
 
 
-@router.delete("/delete/{id}", response_model=CategoryOut, dependencies=[Depends(get_current_active_user)])
+@router.delete("/delete/{id}", response_model=CategoryOut)
 def delete_category(id: UUID, db: Session = Depends(get_db)):
     with tracer.start_as_current_span("delete_category") as span:
         try:

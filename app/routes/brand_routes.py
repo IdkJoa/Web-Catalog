@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.core.security import get_current_active_user
 from app.db.db_connection import get_db
-from app.schemas.brand import BrandOut, BrandBase
+from app.schemas.brand import BrandOut, BrandBase, BrandCreate
 from app.services.brand_service import brand_services
 
 tracer = trace.get_tracer(__name__)
@@ -84,8 +84,8 @@ def get_brand_by_id(id: UUID, db: Session = Depends(get_db)):
             )
 
 
-@router.post("/create", response_model=BrandOut, dependencies=[Depends(get_current_active_user)])
-def create_brand(brand: BrandBase, db: Session = Depends(get_db)):
+@router.post("/create", response_model=BrandOut)
+def create_brand(brand: BrandCreate = Depends(), db: Session = Depends(get_db)):
     with tracer.start_as_current_span("create_brand") as span:
         try:
             span.set_attribute("brand.name", brand.name)
@@ -96,8 +96,16 @@ def create_brand(brand: BrandBase, db: Session = Depends(get_db)):
                     status_code=status.HTTP_409_CONFLICT,
                     detail="brand existe",
                 )
+            image_url = brand_services.save_brand_image(brand.image)
 
-            new_brand = brand_services.create(db, obj_in=brand)
+            brand_data = BrandBase(
+                name=brand.name,
+                slug=brand.slug,
+                is_active=brand.is_active,
+                image_url=image_url
+            )
+
+            new_brand = brand_services.create(db, obj_in=brand_data)
 
             span.set_attribute("http.status_code", 201)
             span.set_attribute("brand.id", str(new_brand.id))
@@ -119,7 +127,7 @@ def create_brand(brand: BrandBase, db: Session = Depends(get_db)):
             )
 
 
-@router.put("/update/{id}", response_model=BrandOut, dependencies=[Depends(get_current_active_user)])
+@router.put("/update/{id}", response_model=BrandOut)
 def update_brand(brand: BrandBase, id: UUID, db: Session = Depends(get_db)):
     with tracer.start_as_current_span("update_brand") as span:
         try:
@@ -153,7 +161,7 @@ def update_brand(brand: BrandBase, id: UUID, db: Session = Depends(get_db)):
             )
 
 
-@router.delete("/delete/{id}", response_model=BrandOut, dependencies=[Depends(get_current_active_user)])
+@router.delete("/delete/{id}", response_model=BrandOut)
 def delete_brand(id: UUID, db: Session = Depends(get_db)):
     with tracer.start_as_current_span("delete_brand") as span:
         try:
