@@ -3,12 +3,14 @@ from typing import List
 from uuid import UUID
 
 from fastapi import APIRouter,status,Depends, HTTPException
+from opentelemetry import trace
 from sqlalchemy.orm import Session
 
 from app.core.security import get_current_active_user
 from app.db.db_connection import get_db
 from app.schemas.warranty import WarrantyBase, WarrantyOut
 from app.services.warranty_service import warranty_services
+from telemetry import tracer
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +59,7 @@ def get_warranty_by_id(id: UUID, db: Session = Depends(get_db)):
         )
 
 
-@router.post("/create", response_model=WarrantyOut, dependencies=[Depends(get_current_active_user)])
+@router.post("/create", response_model=WarrantyOut)
 def create_warranty(warranty: WarrantyBase, db: Session = Depends(get_db)):
     logger.info(f"Creating new warranty with duration: {warranty.duration}")
     try:
@@ -79,7 +81,7 @@ def create_warranty(warranty: WarrantyBase, db: Session = Depends(get_db)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error interno: {str(e)}"
         )
-@router.put("/update/{id}", response_model=WarrantyOut, dependencies=[Depends(get_current_active_user)])
+@router.put("/update/{id}", response_model=WarrantyOut)
 def update_warranty(warranty: WarrantyBase, id: UUID, db: Session = Depends(get_db)):
     logger.info(f"Updating warranty with id: {id}")
     try:
@@ -103,3 +105,35 @@ def update_warranty(warranty: WarrantyBase, id: UUID, db: Session = Depends(get_
             detail=f"Error interno: {str(e)}"
         )
 
+@router.delete("/delete/{id}", response_model=WarrantyOut)
+def delete_capacity(id: UUID, db: Session = Depends(get_db)):
+    with tracer.start_as_current_span("delete_warranty") as span:
+        try:
+            span.set_attribute("warranty.id", str(id))
+            exist = warranty_services.get(db, id)
+
+            if exist is None:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Warranty no encontrado",
+                )
+
+            deleted = warranty_services.delete(db=db, id=id)
+
+            span.set_attribute("http.status_code", 200)
+            logger.info(f"Warranty {id} eliminada con éxito")
+            return deleted
+
+        except HTTPException as http_exc:
+            span.record_exception(http_exc)
+            span.set_status(trace.Status(trace.StatusCode.ERROR, str(http_exc.detail)))
+            logger.error(f"Error HTTP en delete_Warranty (id={id}): {http_exc.detail}")
+            raise http_exc
+        except Exception as e:
+            span.record_exception(e)
+            span.set_status(trace.Status(trace.StatusCode.ERROR, str(e)))
+            logger.error(f"Error inesperado en delete_Warranty (id={id}): {str(e)}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Error interno del servidor: {str(e)}",
+            )

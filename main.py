@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.staticfiles import StaticFiles
+
 from app.routes import banner_routes, site_settings_routes, subscriber_routes
 from app.routes.products_routes import router as routes_products
 from app.routes.category_routes import router as routes_category
@@ -19,10 +21,11 @@ app = FastAPI(
 )
 
 origins = [
-    "http://localhost:3000",
     "http://localhost:5173",
-    "*"
+    "http://127.0.0.1:5173"
 ]
+
+app.mount("/static", StaticFiles(directory="public"), name="static")
 
 app.add_middleware(
     CORSMiddleware,

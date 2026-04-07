@@ -26,17 +26,23 @@ class Capacityservices(CRUDBase[Capacity, CapacityCreate, CapacityBase]):
             logger.error(f"Error fetching capacity with id {id}: {str(e)}")
             raise Exception(f"Error al devolver la capacidad: {str(e)}")
 
-    def get_byname(self, db: Session, capacity: Any) -> Optional[Capacity]:
-        logger.debug(f"Fetching Capacity with name: {capacity}")
+    def get_byprodutcsid(self, db: Session, id: Any, capacity: Any) -> Optional[Capacity]:
+        logger.debug(f"Fetching Capacity with name: {id}")
         try:
-         stmt = (select(Capacity).where(Capacity.capacity == capacity, Capacity.is_active == True))
-         capacity = db.execute(stmt).scalar_one_or_none()
+            stmt = (
+                select(Capacity)
+                .where(
+                    Capacity.product_id == id,
+                    Capacity.capacity == capacity,  # Usa == para comparar
+                    Capacity.is_active == True
+                ))
+            capacity = db.execute(stmt).scalar_one_or_none()
 
-         if capacity is None:
-            logger.debug(f"Capacity with name {capacity} not found")
-            return None
+            if capacity is None:
+               logger.debug(f"Capacity with name {capacity} not found")
+               return None
 
-         return capacity
+            return capacity
         except Exception as e:
             logger.error(f"Error fetching capacity with name {capacity}: {str(e)}")
             raise Exception(f"Error al devolver la capacidad: {str(e)}")

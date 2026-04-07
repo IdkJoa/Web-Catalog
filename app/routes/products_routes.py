@@ -9,7 +9,7 @@ from fastapi import APIRouter, status, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.core.security import get_current_active_user
 from app.db.db_connection import get_db
-from app.schemas.products import ProductCreate, ProductOut, ProductUpdate
+from app.schemas.products import ProductOut, ProductUpdate, ProductsCreate, ProductBase
 from app.services.products_service import product_services
 
 tracer = trace.get_tracer(__name__)
@@ -26,7 +26,7 @@ def get_products(db: Session = Depends(get_db)):
     with tracer.start_as_current_span("get_products") as span:
         try:
             products = product_services.get_multi(db)
-
+            print(products)
             if products == []:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
@@ -177,12 +177,12 @@ def get_by_brand(brand_id: UUID, db: Session = Depends(get_db)):
             )
 
 
-@router.post("/create", response_model=ProductOut, dependencies=[Depends(get_current_active_user)])
-def create_product(product: ProductCreate, db: Session = Depends(get_db)):
+@router.post("/create", response_model=ProductOut)
+def create_product(product: ProductsCreate = Depends(), db: Session = Depends(get_db)):
     with tracer.start_as_current_span("create_product") as span:
         try:
-            span.set_attribute("product.model_name", product.model_name)
-            exist = product_services.get_byname(db, product.model_name)
+            span.set_attribute("product.model_name", product.name)
+            exist = product_services.get_byname(db, product.name)
 
             if exist:
                 raise HTTPException(
@@ -190,7 +190,26 @@ def create_product(product: ProductCreate, db: Session = Depends(get_db)):
                     detail="Producto existente",
                 )
 
-            new_product = product_services.create(db=db, obj_in=product)
+            image_url = product_services.save_products_image(product.image)
+            print(image_url)
+            span.set_attribute("file.path", image_url)
+
+            product_data = ProductBase(
+                category_id=product.category_id,
+                brand_id=product.brand_id,
+                condition_id=product.condition_id,
+                warranty_id=product.warranty_id,
+                name=product.name,
+                model_name=product.model_name,
+                price=product.price,
+                sale_price=product.sale_price,
+                stock_status=product.stock_status,
+                is_featured=product.is_featured,
+                is_active=product.is_active,
+                image_url=image_url,
+            )
+
+            new_product = product_services.create(db=db, obj_in=product_data)
 
             span.set_attribute("http.status_code", 201)
             span.set_attribute("product.id", str(new_product.id))
@@ -201,18 +220,20 @@ def create_product(product: ProductCreate, db: Session = Depends(get_db)):
             span.record_exception(http_exc)
             span.set_status(trace.Status(trace.StatusCode.ERROR, str(http_exc.detail)))
             logger.error(f"Error HTTP en create_product (model={product.model_name}): {http_exc.detail}")
+            print(http_exc)
             raise http_exc
         except Exception as e:
             span.record_exception(e)
             span.set_status(trace.Status(trace.StatusCode.ERROR, str(e)))
             logger.error(f"Error inesperado en create_product (model={product.model_name}): {str(e)}")
+            print(e)
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Error interno del servidor: {str(e)}",
             )
 
 
-@router.put("/update/{id}", response_model=ProductOut, dependencies=[Depends(get_current_active_user)])
+@router.put("/update/{id}", response_model=ProductOut)
 def update_product(id: UUID, product: ProductUpdate, db: Session = Depends(get_db)):
     with tracer.start_as_current_span("update_product") as span:
         try:
@@ -220,6 +241,7 @@ def update_product(id: UUID, product: ProductUpdate, db: Session = Depends(get_d
             exist = product_services.get(db, id)
 
             if exist is None:
+                print(exist)
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
                     detail="Producto no encontrado",
@@ -246,7 +268,7 @@ def update_product(id: UUID, product: ProductUpdate, db: Session = Depends(get_d
             )
 
 
-@router.delete("/delete/{id}", response_model=ProductOut, dependencies=[Depends(get_current_active_user)])
+@router.delete("/delete/{id}", response_model=ProductOut)
 def delete_product(id: UUID, db: Session = Depends(get_db)):
     with tracer.start_as_current_span("delete_product") as span:
         try:
