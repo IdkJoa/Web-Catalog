@@ -34,7 +34,7 @@ def create_social_network(
     logger.info(f"Social network created with id: {social_network.id}")
     return social_network
 
-@router.put("/social-network{id}", status_code=status.HTTP_202_ACCEPTED, dependencies=[Depends(get_current_active_user)])
+@router.put("/social-network/{id}", status_code=status.HTTP_202_ACCEPTED, dependencies=[Depends(get_current_active_user)])
 def update_social_network(
         social_network_id: uuid.UUID,
         social_network: SocialNetworkUpdate,
@@ -52,7 +52,7 @@ def update_social_network(
     return updated_social_network
 
 
-@router.delete("/social-network{id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(get_current_active_user)])
+@router.delete("/social-network/{id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(get_current_active_user)])
 def delete_social_network(
         social_network_id: uuid.UUID,
         db: Session = Depends(get_db)

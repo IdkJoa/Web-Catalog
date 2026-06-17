@@ -25,7 +25,7 @@ def get_site_settings(
     data = site_settings_service.get_all_no_filtered(db=db, skip=skip, limit=limit)
     return data
 
-@router.post("/site-settings", response_model=SiteSettingsCreate, status_code=status.HTTP_201_CREATED, dependencies=[Depends(get_current_active_user)])
+@router.post("/site-settings", response_model=SiteSettingsOut, status_code=status.HTTP_201_CREATED, dependencies=[Depends(get_current_active_user)])
 def create_site_settings(
     setting_in: SiteSettingsCreate,
     db: Session = Depends(get_db)
@@ -37,7 +37,7 @@ def create_site_settings(
 
 
 # 1. Added /{id} to the path so FastAPI knows where to map the UUID
-@router.put("/site-settings/{id}", response_model=SiteSettingsUpdate, status_code=status.HTTP_202_ACCEPTED,
+@router.put("/site-settings/{id}", response_model=SiteSettingsOut, status_code=status.HTTP_202_ACCEPTED,
             dependencies=[Depends(get_current_active_user)])
 def update_site_settings(
         id: uuid.UUID,

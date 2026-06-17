@@ -150,6 +150,8 @@ class SiteSetting(Base):
     whatsapp: Mapped[Optional[str]] = mapped_column(String(20))
     address: Mapped[Optional[str]] = mapped_column(Text)
     email: Mapped[Optional[str]] = mapped_column(String(255))
+    open_time: Mapped[Optional[str]] = mapped_column(String(5))
+    close_time: Mapped[Optional[str]] = mapped_column(String(5))
     #SEO
     meta_title: Mapped[Optional[str]] = mapped_column(String(100))
     meta_description: Mapped[Optional[str]] = mapped_column(String(160))
@@ -162,7 +164,7 @@ class SocialNetwork(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(String(100))
-    url: Mapped[HttpUrl] = mapped_column(String(255))
+    url: Mapped[str] = mapped_column(String(255))
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=text("true"))
 
 
